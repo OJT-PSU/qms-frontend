@@ -1,0 +1,99 @@
+<p-toast key="successEvent" position="top-right"></p-toast>
+<p-toast key="errorEvent" position="top-right"></p-toast>
+
+<div class="page-container">
+  <div class="heading">
+    <img class="logos" src="../../assets/tms.png" alt="TMS Logo" />
+    <h3 class="input-heading">Queue Form</h3>
+    <img class="logos" src="../../assets/capitol.png" alt="QMS Logo" />
+  </div>
+  <p-card
+    [style]="{ width: '25rem' }"
+    header="Good day!"
+    subheader="Please fill in the details:"
+    [formGroup]="queueForm"
+  >
+    @if(currentPage === 1){
+
+    <div class="first-step mt-1">
+      <div class="flex flex-column gap-1 mb-3">
+        <label for="nickname">Nickname</label>
+        <input
+          pInputText
+          id="nickname"
+          aria-describedby="nickname-help"
+          formControlName="name"
+          [class.ng-invalid]="submitAttempted && queueForm.value.name === ''"
+        />
+      </div>
+      <div class="flex flex-column gap-1 mb-3">
+        <label for="email">Email (Optional)</label>
+        <input
+          pInputText
+          id="email"
+          aria-describedby="email-help"
+          formControlName="email"
+        />
+      </div>
+      <div class="flex flex-column gap-1 mb-3">
+        <label for="contactNumber">Phone Number (Optional)</label>
+        <input
+          pInputText
+          id="contactNumber"
+          aria-describedby="contactNumber-help"
+          formControlName="contactNumber"
+        />
+      </div>
+      <div class="w-full flex justify-content-end">
+        <button
+          pButton
+          pRipple
+          class="mt-3"
+          label="Next"
+          (click)="goToPageTwo()"
+        ></button>
+      </div>
+    </div>
+    } @if(currentPage === 2) {
+
+    <div class="second-step">
+      <p-listbox
+        [options]="transactions"
+        formControlName="transactionType"
+        optionLabel="label"
+        optionValue="value"
+        [style]="{ width: '22rem' }"
+      >
+        <ng-template let-transaction pTemplate="transaction">
+          <div class="flex align-items-center">
+            <i [class]="'pi ' + transaction.icon"></i>
+            <span class="ml-2">{{ transaction.label }}</span>
+          </div>
+        </ng-template>
+      </p-listbox>
+      <div
+        class="mt-5 flex flex-row justify-content-center align-items-center gap-1"
+      >
+        <p-checkbox
+          formControlName="privacyAgreement"
+          value="New York"
+          inputId="privacy"
+        ></p-checkbox>
+        <label for="privacy" class="text-xs"
+          >I have read and agree to the Privacy Policy.</label
+        >
+      </div>
+    </div>
+    <div class="mt-5 flex flex-row justify-content-between">
+      <button
+        pRipple
+        pButton
+        label="Back"
+        class="p-button-outlined"
+        (click)="goToPageOne()"
+      ></button>
+      <button pButton pRipple label="Submit" (click)="postData()"></button>
+    </div>
+    }
+  </p-card>
+</div>

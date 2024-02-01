@@ -1,0 +1,238 @@
+<p-toast></p-toast>
+<p-confirmDialog></p-confirmDialog>
+<p-toolbar styleClass="mb-4 gap-2">
+  <ng-template pTemplate="left">
+    <button
+      pButton
+      pRipple
+      label="New"
+      icon="pi pi-plus"
+      class="p-button-success mr-2"
+      (click)="openNew()"
+    ></button>
+    <button
+      pButton
+      pRipple
+      label="Delete"
+      icon="pi pi-trash"
+      class="p-button-danger"
+      (click)="deleteSelectedTerminals()"
+      [disabled]="!selectedTerminals || !selectedTerminals.length"
+    ></button>
+    <button
+      pButton
+      pRipple
+      label="Reset Queue"
+      icon="pi pi-refresh"
+      class="p-button-help ml-2"
+      (click)="resetQueue()"
+    ></button>
+  </ng-template>
+</p-toolbar>
+<p-table
+  [value]="terminalList"
+  dataKey="terminalId"
+  editMode="row"
+  [(selection)]="selectedTerminals"
+  [tableStyle]="{ 'min-width': '50rem' }"
+>
+  <ng-template pTemplate="header">
+    <tr>
+      <th style="width: 3%">
+        <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+        <!-- Add this line -->
+      </th>
+      <th style="width: 20%">Terminal Name</th>
+      <th style="width: 20%">Remarks</th>
+      <th style="width: 20%">Status</th>
+      <th style="width: 20%">Transaction Type</th>
+      <th style="width: 20%"></th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-terminal let-editing="editing">
+    <tr [pEditableRow]="terminal">
+      <td>
+        <p-tableCheckbox [value]="terminal"></p-tableCheckbox>
+      </td>
+      <td>
+        <p-cellEditor>
+          <ng-template pTemplate="input">
+            <input pInputText type="text" [(ngModel)]="terminal.terminalName" />
+          </ng-template>
+          <ng-template pTemplate="output">
+            {{ terminal.terminalName }}
+          </ng-template>
+        </p-cellEditor>
+      </td>
+      <td>
+        <p-cellEditor>
+          <ng-template pTemplate="input">
+            <input
+              pInputText
+              type="text"
+              [(ngModel)]="terminal.remarks"
+              required
+            />
+          </ng-template>
+          <ng-template pTemplate="output">
+            {{ terminal.remarks }}
+          </ng-template>
+        </p-cellEditor>
+      </td>
+      <td>
+        <p-cellEditor>
+          <ng-template pTemplate="input">
+            <p-dropdown
+              [options]="newStatuses"
+              appendTo="body"
+              [(ngModel)]="terminal.status"
+              [style]="{ width: '100%' }"
+            ></p-dropdown>
+          </ng-template>
+          <ng-template pTemplate="output">
+            {{ getStatusByValue(terminal.status) }}
+          </ng-template>
+        </p-cellEditor>
+      </td>
+      <td>
+        <p-cellEditor>
+          <ng-template pTemplate="input">
+            <p-dropdown
+              [options]="transactions"
+              appendTo="body"
+              [(ngModel)]="terminal.transactionType"
+              [style]="{ width: '100%' }"
+            ></p-dropdown>
+          </ng-template>
+          <ng-template pTemplate="output">
+            {{ getValueByLabel(terminal.transactionType) }}
+          </ng-template>
+        </p-cellEditor>
+      </td>
+      <td>
+        <div class="flex align-items-center justify-content-center gap-2">
+          <button
+            *ngIf="!terminal.isEditing"
+            pButton
+            pRipple
+            type="button"
+            pInitEditableRow
+            icon="pi pi-pencil"
+            (click)="onRowEditInit(terminal)"
+            class="p-button-rounded p-button-text"
+          ></button>
+          <button
+            *ngIf="terminal.isEditing"
+            pButton
+            pRipple
+            type="button"
+            pSaveEditableRow
+            icon="pi pi-check"
+            (click)="onRowEditSave(terminal)"
+            class="p-button-rounded p-button-text p-button-success mr-2"
+          ></button>
+          <button
+            *ngIf="terminal.isEditing"
+            pButton
+            pRipple
+            type="button"
+            pCancelEditableRow
+            icon="pi pi-times"
+            (click)="onRowEditCancel(terminal)"
+            class="p-button-rounded p-button-text p-button-danger"
+          ></button>
+        </div>
+      </td>
+    </tr>
+  </ng-template>
+</p-table>
+
+<p-dialog
+  [(visible)]="terminalDialog"
+  [style]="{ width: '450px', height: '600px' }"
+  header="Terminal Details"
+  [modal]="true"
+  styleClass="p-fluid"
+>
+  <ng-template pTemplate="content">
+    <div class="field">
+      <label for="name">Terminal Name</label>
+      <input
+        type="text"
+        pInputText
+        id="name"
+        [(ngModel)]="terminal.terminalName"
+        required
+        autofocus
+      />
+      <small class="p-error" *ngIf="submitted && !terminal.terminalName"
+        >Name is required.</small
+      >
+    </div>
+    <div class="field">
+      <label for="description">Remarks</label>
+      <textarea
+        id="description"
+        pInputTextarea
+        [(ngModel)]="terminal.remarks"
+        required
+        rows="3"
+        cols="20"
+      ></textarea>
+    </div>
+
+    <div class="field">
+      <label>Transaction Type</label>
+      <p-dropdown
+        [options]="transactions"
+        [(ngModel)]="terminal.transactionType"
+        optionLabel="label"
+        optionValue="value"
+        placeholder="Select Transaction Type"
+      ></p-dropdown>
+    </div>
+
+    <div class="p-field">
+      <label class="p-mb-3">Status</label>
+      <div class="p-formgrid p-grid">
+        <div class="p-field-radiobutton p-col-6 mt-2">
+          <p-radioButton
+            id="status2"
+            name="status"
+            value="active"
+            [(ngModel)]="terminal.status"
+          ></p-radioButton>
+          <label for="status2" class="ml-2">Active</label>
+        </div>
+        <div class="p-field-radiobutton p-col-6 mt-2">
+          <p-radioButton
+            id="status2"
+            name="status"
+            value="inactive"
+            [(ngModel)]="terminal.status"
+          ></p-radioButton>
+          <label for="status2" class="ml-2">Inactive</label>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+
+  <ng-template pTemplate="footer">
+    <button
+      pButton
+      pRipple
+      label="Cancel"
+      icon="pi pi-times"
+      class="p-button-text"
+      (click)="hideDialog()"
+    ></button>
+    <button
+      pButton
+      pRipple
+      label="Save"
+      icon="pi pi-check"
+      class="p-button-text"
+      (click)="saveProduct()"
+    ></button>
+  </ng-template>
+</p-dialog>
