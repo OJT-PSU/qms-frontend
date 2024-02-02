@@ -6,11 +6,12 @@ import {
   Validators,
 } from '@angular/forms';
 import { QueueService } from '../queue.service';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-queue-input',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, RouterLink],
   templateUrl: './queue-input.component.html',
   styleUrl: './queue-input.component.css',
 })
