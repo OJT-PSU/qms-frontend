@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 @Injectable({
@@ -12,17 +12,14 @@ export class QueueService {
     email: string = '',
     contactNumber: string = ''
   ) {
-    const response = await this.http
-      .post('http://localhost:3000/queue', {
+    return await this.http.post<HttpResponse<any>>(
+      'http://localhost:3000/queue',
+      {
         name,
         email,
         contactNumber,
-      })
-      .subscribe((config) => {
-        console.log(config);
-      });
-    console.log(name, email, contactNumber);
-    console.log({ response });
+      }
+    );
   }
 
   getQueueCustomer(): Observable<any[]> {

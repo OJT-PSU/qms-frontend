@@ -7,6 +7,8 @@ import {
 } from '@angular/forms';
 import { QueueService } from '../queue.service';
 import { RouterLink } from '@angular/router';
+import { config } from 'process';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-queue-input',
@@ -27,13 +29,22 @@ export class QueueInputComponent {
   async postData() {
     const { name, email, contactNumber } = this.queueForm.value;
     if (this.queueForm.valid) {
-      await this.service.createQueueCustomer(
+      const observable = await this.service.createQueueCustomer(
         name ?? '',
         email ?? '',
         contactNumber ?? ''
       );
 
-      this.queueForm.setValue({ name: '', email: '', contactNumber: '' });
+      observable.subscribe(
+        (config) => {
+          this.queueForm.setValue({ name: '', email: '', contactNumber: '' });
+        },
+        (error: HttpErrorResponse) => {
+          console.log('hi');
+        }
+      );
+
+      // console.log(response);
     }
   }
 }
