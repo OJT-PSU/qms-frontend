@@ -1,3 +1,18 @@
+:root {
+  --form-background-color: #f6f5f5;
+}
+
+/* Page container */
+
+.page-container {
+  display: flex;
+  flex-direction: column;
+  font-family: Arial, Helvetica, sans-serif;
+  height: 100vh;
+}
+
+/* Navbar */
+
 nav {
   display: flex;
   border-bottom: 1px solid rgba(0, 0, 0, 0.5);
@@ -6,9 +21,83 @@ nav {
 .nav-item {
   padding: 1em 2em;
   border-right: 1px solid rgba(0, 0, 0, 0.5);
+  transition: 125ms background-color;
+}
+
+.nav-item:hover {
+  background-color: rgb(205, 205, 205);
 }
 
 a {
   text-decoration: none;
   color: black;
+}
+
+/* Heading */
+
+.input-heading {
+  font-size: 1.5rem;
+  margin-bottom: 1em;
+}
+
+/* Input form */
+
+.input-form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  /* font-size: 1.25em; */
+}
+
+.form-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+
+  flex-grow: 1;
+  background-color: #f6f5f5;
+  width: max-content;
+  align-self: center;
+  margin: 5rem 0;
+  padding: 2rem;
+}
+
+.form-label {
+  /* display: block; */
+  margin: 0 0 0.5rem 0;
+  /* font-size: 0.8em; */
+  /* text-indent: 0.5em; */
+}
+
+.form-input {
+  height: 2.5rem;
+  margin-bottom: 1rem;
+  /* font-size: 1.25rem; */
+  padding: 0 1rem;
+
+  width: 20rem;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(0, 0, 0, 0.5);
+}
+
+.input-button {
+  font-size: 0.8rem;
+  align-self: center;
+
+  padding: 0.75rem;
+  margin-top: 2rem;
+  width: 100%;
+
+  background-color: #35aaff;
+  color: white;
+
+  border-radius: 0.5em;
+  border: 1px solid rgba(0, 0, 0, 0.5);
+}
+
+.input-button:disabled {
+  background-color: #cbcbcb;
+  color: black;
+  border: 1px solid rgba(0, 0, 0, 0);
 }

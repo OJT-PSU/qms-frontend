@@ -1,25 +1,36 @@
-<nav>
-  <div class="nav-item"><a routerLink="/queue">Input</a></div>
-  <div class="nav-item"><a routerLink="/display">Display</a></div>
-</nav>
-
-<form [formGroup]="queueForm">
-  <label for="name">
-    Name:
-    <input type="text" formControlName="name" />
-  </label>
-  <label for="email">
-    Email:
-    <input type="email" formControlName="email" />
-  </label>
-  <label for="contactNumber">
-    Contact Number:
-    <input type="text" formControlName="contactNumber" />
-  </label>
-  <button type="submit" [disabled]="!queueForm.valid" (click)="postData()">
-    Submit
-  </button>
-</form>
-
-<p>{{ queueForm.value.name }}</p>
-{{ queueForm.valid }}
+<div class="page-container">
+  <div class="form-container">
+    <h3 class="input-heading">Queue Form</h3>
+    <form [formGroup]="queueForm" class="input-form">
+      <label class="form-label" for="name"> Name: </label>
+      <input
+        placeholder="Enter your name"
+        class="form-input"
+        type="text"
+        formControlName="name"
+      />
+      <label class="form-label" for="email"> Email: </label>
+      <input
+        placeholder="Enter your email"
+        class="form-input"
+        type="email"
+        formControlName="email"
+      />
+      <label class="form-label" for="contactNumber"> Phone No.: </label>
+      <input
+        placeholder="Enter your number"
+        class="form-input"
+        type="text"
+        formControlName="contactNumber"
+      />
+      <button
+        class="input-button"
+        type="submit"
+        [disabled]="!queueForm.valid"
+        (click)="postData()"
+      >
+        Submit
+      </button>
+    </form>
+  </div>
+</div>
