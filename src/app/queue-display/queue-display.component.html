@@ -11,16 +11,19 @@
           <p>Name</p>
           <p>Terminal</p>
         </li>
-        @for (customer of data; track customer.queueId){
-        <li>
+        @for (customer of data; track customer.queueId){ @if
+        (customer.queueStatus!="accommodated"){
+        <li [class]="customer.queueStatus">
           <p>
             {{ customer.name }}
           </p>
           <p>
+            @if (customer.queueStatus!="waiting"){
             {{ customer.queueStatus }}
+            }
           </p>
         </li>
-        }
+        } }
       </ul>
     </div>
     <div class="right">
@@ -37,7 +40,9 @@
       </div>
     </div>
   </div>
-  <div class="scroll">
-    <p>scrolling effect</p>
+  <div class="parent-scroll">
+    <div class="scroll">
+      <p>scrolling effect</p>
+    </div>
   </div>
 </div>
