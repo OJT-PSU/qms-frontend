@@ -19,7 +19,6 @@ export class QueueDisplayComponent implements OnInit {
     this.queueService.getQueueCustomer().subscribe(
       (response) => {
         this.data = response;
-        console.log('Data:', this.data);
       },
       (error) => {
         console.error('Error fetching data:', error);

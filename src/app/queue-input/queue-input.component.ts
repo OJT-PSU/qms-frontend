@@ -32,6 +32,8 @@ export class QueueInputComponent {
         email ?? '',
         contactNumber ?? ''
       );
+
+      this.queueForm.setValue({ name: '', email: '', contactNumber: '' });
     }
   }
 }
