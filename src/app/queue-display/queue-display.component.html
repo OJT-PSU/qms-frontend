@@ -1,6 +1,43 @@
-<p>queue-display works!</p>
-<ul>
+<!-- <ul>
   @for (customer of data; track customer.queueId){
-  <li>{{ customer.name }}</li>
+  <li>{{ customer.name }} {{ customer.queueStatus }}</li>
   }
-</ul>
+</ul> -->
+<div class="main">
+  <div class="container">
+    <div class="left">
+      <ul class="list">
+        <li>
+          <p>Name</p>
+          <p>Terminal</p>
+        </li>
+        @for (customer of data; track customer.queueId){
+        <li>
+          <p>
+            {{ customer.name }}
+          </p>
+          <p>
+            {{ customer.queueStatus }}
+          </p>
+        </li>
+        }
+      </ul>
+    </div>
+    <div class="right">
+      <div class="logo">
+        <img src="../../assets/tms.png" alt="tms-logo" />
+        <div class="logo-name">
+          <h1>Queuing Management System</h1>
+          <p>Treasury Management System</p>
+        </div>
+        <img src="../../assets/capitol.png" alt="capitol-logo" />
+      </div>
+      <div class="video">
+        <video src="../../assets/sample_video.mp4" autoplay muted></video>
+      </div>
+    </div>
+  </div>
+  <div class="scroll">
+    <p>scrolling effect</p>
+  </div>
+</div>
