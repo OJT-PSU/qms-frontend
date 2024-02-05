@@ -16,14 +16,16 @@ export class QueueDisplayComponent implements OnInit {
   }
 
   getData(): void {
+    // setInterval(() => {
     this.queueService.getQueueCustomer().subscribe(
       (response) => {
         this.data = response;
-        console.log('Data:', this.data);
+        console.log('Refresh');
       },
       (error) => {
         console.error('Error fetching data:', error);
       }
     );
+    // }, 15000);
   }
 }
