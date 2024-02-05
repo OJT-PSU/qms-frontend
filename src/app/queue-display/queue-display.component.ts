@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { QueueService } from '../queue.service';
-
 @Component({
   selector: 'app-queue-display',
   templateUrl: './queue-display.component.html',
@@ -16,16 +15,24 @@ export class QueueDisplayComponent implements OnInit {
   }
 
   getData(): void {
-    // setInterval(() => {
     this.queueService.getQueueCustomer().subscribe(
       (response) => {
-        this.data = response;
-        console.log('Refresh');
+        // Sort the data based on 'queueStatus' and 'createdAt'
+        this.data = response.sort((a, b) => {
+          if (a.queueStatus !== b.queueStatus) {
+            return a.queueStatus.localeCompare(b.queueStatus);
+          } else {
+            return (
+              new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+            );
+          }
+        });
+
+        console.log(this.data);
       },
       (error) => {
         console.error('Error fetching data:', error);
       }
     );
-    // }, 15000);
   }
 }

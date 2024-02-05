@@ -110,6 +110,7 @@ body {
   position: absolute;
   bottom: 0;
   top: 0;
+  gap: 2em;
 }
 .scroll p {
   font-size: 1.5em;
