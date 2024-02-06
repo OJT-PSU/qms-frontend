@@ -1,8 +1,14 @@
+<p-toast key="tc" position="top-right"></p-toast>
+
 <div class="page-container">
-  <div class="form-container">
+  <div class="heading">
+    <img class="logos" src="../../assets/tms.png" alt="TMS Logo" />
     <h3 class="input-heading">Queue Form</h3>
+    <img class="logos" src="../../assets/capitol.png" alt="QMS Logo" />
+  </div>
+  <div class="form-container">
     <form [formGroup]="queueForm" class="input-form">
-      <label class="form-label" for="name"> Name: </label>
+      <label class="form-label" for="name"> Nickname: </label>
       <input
         placeholder="Enter your name"
         class="form-input"
@@ -24,13 +30,13 @@
         formControlName="contactNumber"
       />
       <button
+        type="button"
+        pButton
+        pRipple
         class="input-button"
-        type="submit"
-        [disabled]="!queueForm.valid"
+        label="Submit"
         (click)="postData()"
-      >
-        Submit
-      </button>
+      ></button>
     </form>
   </div>
 </div>

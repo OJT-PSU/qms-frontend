@@ -7,13 +7,23 @@ import {
 } from '@angular/forms';
 import { QueueService } from '../queue.service';
 import { RouterLink } from '@angular/router';
-import { config } from 'process';
 import { HttpErrorResponse } from '@angular/common/http';
+import { ToastModule } from 'primeng/toast';
+import { MessageService, PrimeNGConfig } from 'primeng/api';
+import { RippleModule } from 'primeng/ripple';
+import { ButtonModule } from 'primeng/button';
 
 @Component({
   selector: 'app-queue-input',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [
+    ReactiveFormsModule,
+    RouterLink,
+    ToastModule,
+    RippleModule,
+    ButtonModule,
+  ],
+  providers: [MessageService],
   templateUrl: './queue-input.component.html',
   styleUrl: './queue-input.component.css',
 })
@@ -24,27 +34,46 @@ export class QueueInputComponent {
     contactNumber: new FormControl(''),
   });
 
-  constructor(private service: QueueService) {}
+  constructor(
+    private service: QueueService,
+    private messageService: MessageService,
+    private primengConfig: PrimeNGConfig
+  ) {}
+
+  ngOnInit() {
+    this.primengConfig.ripple = true;
+  }
 
   async postData() {
     const { name, email, contactNumber } = this.queueForm.value;
-    if (this.queueForm.valid) {
-      const observable = await this.service.createQueueCustomer(
-        name ?? '',
-        email ?? '',
-        contactNumber ?? ''
-      );
+    this.appendToQueueSuccess();
 
-      observable.subscribe(
-        (config) => {
-          this.queueForm.setValue({ name: '', email: '', contactNumber: '' });
-        },
-        (error: HttpErrorResponse) => {
-          console.log('hi');
-        }
-      );
+    // if (this.queueForm.valid) {
+    //   const observable = await this.service.createQueueCustomer(
+    //     name ?? '',
+    //     email ?? '',
+    //     contactNumber ?? ''
+    //   );
 
-      // console.log(response);
-    }
+    //   observable.subscribe(
+    //     (config) => {
+    //       this.queueForm.setValue({ name: '', email: '', contactNumber: '' });
+    //     },
+    //     (error: HttpErrorResponse) => {
+    //       console.log('hi');
+    //     }
+    //   );
+
+    //   // console.log(response);
+    // }
+  }
+
+  appendToQueueSuccess() {
+    this.messageService.add({
+      key: 'tc',
+      severity: 'success',
+      summary: 'Info',
+      detail: 'Message Content',
+    });
   }
 }

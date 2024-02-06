@@ -5,39 +5,37 @@
 /* Page container */
 
 .page-container {
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   font-family: Arial, Helvetica, sans-serif;
   height: 100vh;
-}
 
-/* Navbar */
-
-nav {
-  display: flex;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.5);
-}
-
-.nav-item {
-  padding: 1em 2em;
-  border-right: 1px solid rgba(0, 0, 0, 0.5);
-  transition: 125ms background-color;
-}
-
-.nav-item:hover {
-  background-color: rgb(205, 205, 205);
-}
-
-a {
-  text-decoration: none;
+  position: relative;
+  background-color: white;
   color: black;
 }
 
 /* Heading */
 
-.input-heading {
-  font-size: 1.5rem;
-  margin-bottom: 1em;
+.heading {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+
+  width: min(25rem, 100%);
+  margin: 4rem 0;
+  font-size: 1.5em;
+
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.heading .logos {
+  height: 80px;
+  aspect-ratio: 1;
 }
 
 /* Input form */
@@ -46,7 +44,9 @@ a {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  /* font-size: 1.25em; */
+  width: 100%;
+
+  padding: 2.5rem 0;
 }
 
 .form-container {
@@ -54,35 +54,37 @@ a {
   justify-content: center;
   align-items: center;
   flex-direction: column;
-
-  flex-grow: 1;
-  background-color: #f6f5f5;
-  width: max-content;
+  /* flex-grow: 1; */
   align-self: center;
-  margin: 5rem 0;
+
+  background-color: #f6f5f5;
+  width: min(25rem, 100%);
+  margin: 0 0 5rem 0;
   padding: 2rem;
-}
 
-.form-label {
-  /* display: block; */
-  margin: 0 0 0.5rem 0;
-  /* font-size: 0.8em; */
-  /* text-indent: 0.5em; */
-}
-
-.form-input {
-  height: 2.5rem;
-  margin-bottom: 1rem;
-  /* font-size: 1.25rem; */
-  padding: 0 1rem;
-
-  width: 20rem;
   border-radius: 0.5rem;
   border: 1px solid rgba(0, 0, 0, 0.5);
 }
 
+.form-label {
+  margin: 0 0 0.5rem 0;
+}
+
+.form-input {
+  height: 2.5em;
+  margin-bottom: 1em;
+  font-size: 1em;
+  text-indent: 1em;
+
+  width: 100%;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(0, 0, 0, 0.5);
+  background-color: white;
+}
+
 .input-button {
-  font-size: 0.8rem;
+  height: 2.5em;
+  font-size: 1em;
   align-self: center;
 
   padding: 0.75rem;
@@ -100,4 +102,31 @@ a {
   background-color: #cbcbcb;
   color: black;
   border: 1px solid rgba(0, 0, 0, 0);
+}
+
+/* Tablet */
+
+@media (min-width: 600px) and (max-width: 900px) {
+  .form-container {
+    font-size: 24px;
+    width: 70vw;
+
+    padding: 4rem 2rem;
+  }
+
+  .input-form {
+    width: 95%;
+  }
+
+  .heading {
+    position: relative;
+    width: 75vw;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .heading .logos {
+    height: 110px;
+    aspect-ratio: 1;
+  }
 }
