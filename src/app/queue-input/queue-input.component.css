@@ -16,28 +16,6 @@
   color: black;
 }
 
-/* Navbar */
-
-nav {
-  display: flex;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.5);
-}
-
-.nav-item {
-  padding: 1em 2em;
-  border-right: 1px solid rgba(0, 0, 0, 0.5);
-  transition: 125ms background-color;
-}
-
-.nav-item:hover {
-  background-color: rgb(205, 205, 205);
-}
-
-a {
-  text-decoration: none;
-  color: black;
-}
-
 /* Heading */
 
 .heading {
@@ -55,7 +33,7 @@ a {
   transform: translateX(-50%);
 }
 
-.heading img {
+.heading .logos {
   height: 80px;
   aspect-ratio: 1;
 }
@@ -147,7 +125,7 @@ a {
     transform: translateX(-50%);
   }
 
-  .heading img {
+  .heading .logos {
     height: 110px;
     aspect-ratio: 1;
   }
