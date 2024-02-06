@@ -7,17 +7,19 @@ import { QueueService } from '../queue.service';
 })
 export class QueueDisplayComponent implements OnInit {
   data: any[] = [];
-
+  fetchData: any[] = [];
+  text: string = '';
+  animation: string = '';
   constructor(private queueService: QueueService) {}
 
   ngOnInit(): void {
     this.getData();
+    this.getConfig();
   }
 
   getData(): void {
     this.queueService.getQueueCustomer().subscribe(
       (response) => {
-        // Sort the data based on 'queueStatus' and 'createdAt'
         this.data = response.sort((a, b) => {
           if (a.queueStatus !== b.queueStatus) {
             return a.queueStatus.localeCompare(b.queueStatus);
@@ -27,11 +29,24 @@ export class QueueDisplayComponent implements OnInit {
             );
           }
         });
-
-        console.log(this.data);
       },
       (error) => {
         console.error('Error fetching data:', error);
+      }
+    );
+  }
+
+  getConfig(): void {
+    this.queueService.getConfig().subscribe(
+      (response) => {
+        console.log(response);
+        const { displayId, dispMsg, scrollTime } = response[0];
+        // this.animation = `scroll-left ${scrollTime} ease-in-out infinite`;
+        this.animation = scrollTime;
+        this.text = dispMsg;
+      },
+      (error) => {
+        console.log(error);
       }
     );
   }
