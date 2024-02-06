@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { QueueService } from '../queue.service';
-
 @Component({
   selector: 'app-queue-display',
   templateUrl: './queue-display.component.html',
@@ -8,24 +7,47 @@ import { QueueService } from '../queue.service';
 })
 export class QueueDisplayComponent implements OnInit {
   data: any[] = [];
-
+  fetchData: any[] = [];
+  text: string = '';
+  animation: string = '';
   constructor(private queueService: QueueService) {}
 
   ngOnInit(): void {
     this.getData();
+    this.getConfig();
   }
 
   getData(): void {
-    // setInterval(() => {
     this.queueService.getQueueCustomer().subscribe(
       (response) => {
-        this.data = response;
-        console.log('Refresh');
+        this.data = response.sort((a, b) => {
+          if (a.queueStatus !== b.queueStatus) {
+            return a.queueStatus.localeCompare(b.queueStatus);
+          } else {
+            return (
+              new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+            );
+          }
+        });
       },
       (error) => {
         console.error('Error fetching data:', error);
       }
     );
-    // }, 15000);
+  }
+
+  getConfig(): void {
+    this.queueService.getConfig().subscribe(
+      (response) => {
+        console.log(response);
+        const { displayId, dispMsg, scrollTime } = response[0];
+        // this.animation = `scroll-left ${scrollTime} ease-in-out infinite`;
+        this.animation = scrollTime;
+        this.text = dispMsg;
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
   }
 }
