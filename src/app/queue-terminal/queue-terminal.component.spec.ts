@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { QueueAdminComponent } from './queue-admin.component';
+import { QueueTerminalComponent } from './queue-terminal.component';
 
-describe('QueueAdminComponent', () => {
-  let component: QueueAdminComponent;
-  let fixture: ComponentFixture<QueueAdminComponent>;
+describe('QueueTerminalComponent', () => {
+  let component: QueueTerminalComponent;
+  let fixture: ComponentFixture<QueueTerminalComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [QueueAdminComponent]
+      imports: [QueueTerminalComponent]
     })
     .compileComponents();
     
-    fixture = TestBed.createComponent(QueueAdminComponent);
+    fixture = TestBed.createComponent(QueueTerminalComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -1,16 +1,30 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { QueueService } from '../queue.service';
+import { interval, Subscription } from 'rxjs';
+import { switchMap } from 'rxjs';
 @Component({
   selector: 'app-queue-display',
   templateUrl: './queue-display.component.html',
   styleUrls: ['./queue-display.component.css'],
 })
-export class QueueDisplayComponent implements OnInit {
+export class QueueDisplayComponent implements OnInit, OnDestroy {
   data: any[] = [];
   fetchData: any[] = [];
   text: string = '';
   animation: string = '';
-  constructor(private queueService: QueueService) {}
+  private subscription: Subscription;
+  constructor(private queueService: QueueService) {
+    this.subscription = interval(50000)
+      .pipe(switchMap(() => this.queueService.getQueueCustomer()))
+      .subscribe((data) => {
+        console.log(data);
+        this.data = data;
+      });
+  }
+
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
+  }
 
   ngOnInit(): void {
     this.getData();
@@ -20,6 +34,7 @@ export class QueueDisplayComponent implements OnInit {
   getData(): void {
     this.queueService.getQueueCustomer().subscribe(
       (response) => {
+        console.log(response);
         this.data = response.sort((a, b) => {
           if (a.queueStatus !== b.queueStatus) {
             return a.queueStatus.localeCompare(b.queueStatus);

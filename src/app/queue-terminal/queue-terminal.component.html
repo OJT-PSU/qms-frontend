@@ -24,8 +24,8 @@
       </td>
     </thead>
     <tr>
-      <td><input type="text" placeholder="Gin" id="" readonly /></td>
-      <td><input type="text" placeholder="Cashier" id="" readonly /></td>
+      <td><input type="text" placeholder="Sample" id="" readonly /></td>
+      <td><input type="text" placeholder="Sample" id="" readonly /></td>
       <td class="status_td">
         <p class="status active">
           <select name="" id="">
@@ -62,8 +62,8 @@
       </td>
     </tr>
     <tr>
-      <td><input type="text" placeholder="Gin" id="" /></td>
-      <td><input type="text" placeholder="Cashier" id="" /></td>
+      <td><input type="text" placeholder="Sample" id="" /></td>
+      <td><input type="text" placeholder="Sample" id="" /></td>
       <td class="status_td">
         <p class="status inactive">
           <select name="" id="">
@@ -114,5 +114,67 @@
         </div>
       </td>
     </tr>
+    @for (lists of list; track lists.terminalId){
+    <tr>
+      <td>
+        <input
+          type="text"
+          placeholder="{{ lists.terminalName }}"
+          id=""
+          readonly
+        />
+      </td>
+      <td>
+        <input type="text" placeholder="{{ lists.remarks }}" id="" readonly />
+      </td>
+      <td class="status_td">
+        <p class="status" [class]="lists.status">
+          <select name="" id="">
+            <option [value]="lists.status" selected>
+              {{ lists.status }}
+            </option>
+            <option
+              value="active"
+              [style.display]="lists.status === 'active' ? 'none' : 'block'"
+            >
+              active
+            </option>
+            <option
+              value="inactive"
+              [style.display]="lists.status === 'inactive' ? 'none' : 'block'"
+            >
+              inactive
+            </option>
+          </select>
+        </p>
+      </td>
+      <td>
+        <div class="action">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="1em"
+            height="1em"
+            viewBox="0 0 24 24"
+          >
+            <path
+              fill="currentColor"
+              d="M3 21V3h10.925l-2 2H5v14h14v-6.95l2-2V21zm18.025-9H12zM9 15v-4.25L19.625.125L23.8 4.4L13.25 15zM21.025 4.4l-1.4-1.4zM11 13h1.4l5.8-5.8l-.7-.7l-.725-.7L11 11.575zm6.5-6.5l-.725-.7zl.7.7z"
+            />
+          </svg>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="1em"
+            height="1em"
+            viewBox="0 0 24 24"
+          >
+            <path
+              fill="currentColor"
+              d="M7 21q-.825 0-1.412-.587T5 19V6H4V4h5V3h6v1h5v2h-1v13q0 .825-.587 1.413T17 21zM17 6H7v13h10zM9 17h2V8H9zm4 0h2V8h-2zM7 6v13z"
+            />
+          </svg>
+        </div>
+      </td>
+    </tr>
+    }
   </table>
 </div>

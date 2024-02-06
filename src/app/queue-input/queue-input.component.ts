@@ -91,7 +91,7 @@ export class QueueInputComponent {
       key: 'errorEvent',
       severity: 'error',
       summary: 'Error',
-      detail: `${err.message}`,
+      detail: `${err.error.message}`,
     });
   }
 }
