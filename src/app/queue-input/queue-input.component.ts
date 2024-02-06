@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -12,6 +12,7 @@ import { ToastModule } from 'primeng/toast';
 import { MessageService, PrimeNGConfig } from 'primeng/api';
 import { RippleModule } from 'primeng/ripple';
 import { ButtonModule } from 'primeng/button';
+import { catchError, throwError } from 'rxjs';
 
 @Component({
   selector: 'app-queue-input',
@@ -46,34 +47,51 @@ export class QueueInputComponent {
 
   async postData() {
     const { name, email, contactNumber } = this.queueForm.value;
-    this.appendToQueueSuccess();
+    // this.showSuccess('hello');
 
-    // if (this.queueForm.valid) {
-    //   const observable = await this.service.createQueueCustomer(
-    //     name ?? '',
-    //     email ?? '',
-    //     contactNumber ?? ''
-    //   );
+    if (this.queueForm.valid) {
+      const observable = await this.service.createQueueCustomer(
+        name ?? '',
+        email ?? '',
+        contactNumber ?? ''
+      );
 
-    //   observable.subscribe(
-    //     (config) => {
-    //       this.queueForm.setValue({ name: '', email: '', contactNumber: '' });
-    //     },
-    //     (error: HttpErrorResponse) => {
-    //       console.log('hi');
-    //     }
-    //   );
-
-    //   // console.log(response);
-    // }
+      observable
+        .pipe(
+          catchError((error) => {
+            this.showError(error);
+            return throwError(() => error);
+          })
+        )
+        .subscribe({
+          next: (config) => {
+            console.log({ config });
+            this.showSuccess();
+            this.queueForm.setValue({ name: '', email: '', contactNumber: '' });
+          },
+          error: (error) => {
+            // Handle any errors that might happen after catchError
+            console.error('An error occurred:', error);
+          },
+        });
+    }
   }
 
-  appendToQueueSuccess() {
+  showSuccess() {
     this.messageService.add({
-      key: 'tc',
+      key: 'successEvent',
       severity: 'success',
-      summary: 'Info',
-      detail: 'Message Content',
+      summary: 'Success',
+      detail: `You have been added to the queue!`,
+    });
+  }
+
+  showError(err: HttpErrorResponse) {
+    this.messageService.add({
+      key: 'errorEvent',
+      severity: 'error',
+      summary: 'Error',
+      detail: `${err.message}`,
     });
   }
 }
