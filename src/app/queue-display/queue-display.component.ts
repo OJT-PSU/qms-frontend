@@ -1,30 +1,16 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { QueueService } from '../queue.service';
-import { interval, Subscription } from 'rxjs';
-import { switchMap } from 'rxjs';
 @Component({
   selector: 'app-queue-display',
   templateUrl: './queue-display.component.html',
   styleUrls: ['./queue-display.component.css'],
 })
-export class QueueDisplayComponent implements OnInit, OnDestroy {
+export class QueueDisplayComponent implements OnInit {
   data: any[] = [];
   fetchData: any[] = [];
   text: string = '';
   animation: string = '';
-  private subscription: Subscription;
-  constructor(private queueService: QueueService) {
-    this.subscription = interval(50000)
-      .pipe(switchMap(() => this.queueService.getQueueCustomer()))
-      .subscribe((data) => {
-        console.log(data);
-        this.data = data;
-      });
-  }
-
-  ngOnDestroy() {
-    this.subscription.unsubscribe();
-  }
+  constructor(private queueService: QueueService) {}
 
   ngOnInit(): void {
     this.getData();
@@ -34,7 +20,6 @@ export class QueueDisplayComponent implements OnInit, OnDestroy {
   getData(): void {
     this.queueService.getQueueCustomer().subscribe(
       (response) => {
-        console.log(response);
         this.data = response.sort((a, b) => {
           if (a.queueStatus !== b.queueStatus) {
             return a.queueStatus.localeCompare(b.queueStatus);
@@ -55,7 +40,7 @@ export class QueueDisplayComponent implements OnInit, OnDestroy {
     this.queueService.getConfig().subscribe(
       (response) => {
         console.log(response);
-        const { displayId, dispMsg, scrollTime } = response[0];
+        const {  dispMsg, scrollTime } = response[0];
         // this.animation = `scroll-left ${scrollTime} ease-in-out infinite`;
         this.animation = scrollTime;
         this.text = dispMsg;
