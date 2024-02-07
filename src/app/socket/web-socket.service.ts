@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core';
-import { Socket } from 'ngx-socketio2';
+import { Socket } from 'ngx-socket-io';
 import { Observable, tap } from 'rxjs';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class WebSocketService {
   constructor(private socket: Socket) {}
 
@@ -12,27 +14,26 @@ export class WebSocketService {
   }
 
   getQueue() {
-    return this.socket.on('updated-queue').pipe(
-      tap((args) => {
-        return args;
-      })
-    );
-    // let observable = new Observable<any[]>((observer) => {
-    //   this.socket.on('updated-queue', (data: any[]) => {
-    //     observer.next(data);
-    //   });
-    //   return () => {
-    //     this.socket.disconnect();
-    //   };
-    // });
-    // return observable;
+    let observable = new Observable<any[]>((observer) => {
+      this.socket.on('updated-queue', (data: any[]) => {
+        observer.next(data);
+      });
+      return () => {
+        this.socket.disconnect();
+      };
+    });
+    return observable;
   }
 
   queueUpdateEvent() {
-    return this.socket.on('new-queue-update').pipe(
-      tap(() => {
-        return;
-      })
-    );
+    let observable = new Observable<any[]>((observer) => {
+      this.socket.on('new-queue-update', () => {
+        observer.next();
+      });
+      return () => {
+        this.socket.disconnect();
+      };
+    });
+    return observable;
   }
 }

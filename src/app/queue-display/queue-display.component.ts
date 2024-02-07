@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { QueueService } from '../queue.service';
+import { WebSocketService } from '../socket/web-socket.service';
+
 @Component({
   selector: 'app-queue-display',
+  standalone: true,
   templateUrl: './queue-display.component.html',
   styleUrls: ['./queue-display.component.css'],
 })
@@ -10,11 +13,22 @@ export class QueueDisplayComponent implements OnInit {
   fetchData: any[] = [];
   text: string = '';
   animation: string = '';
-  constructor(private queueService: QueueService) {}
+  constructor(
+    private queueService: QueueService,
+    private websocketService: WebSocketService
+  ) {}
 
   ngOnInit(): void {
     this.getData();
     this.getConfig();
+
+    this.websocketService.getQueue().subscribe((response) => {
+      this.data = response;
+    });
+
+    this.websocketService.queueUpdateEvent().subscribe(() => {
+      this.websocketService.sendQueueRequest();
+    });
   }
 
   getData(): void {
