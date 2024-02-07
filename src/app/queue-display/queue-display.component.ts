@@ -23,7 +23,13 @@ export class QueueDisplayComponent implements OnInit {
     this.getConfig();
 
     this.websocketService.getQueue().subscribe((response) => {
-      this.data = response;
+      this.data = response.sort((a, b) => {
+        if (a.queueStatus !== b.queueStatus) {
+          return a.queueStatus.localeCompare(b.queueStatus);
+        } else {
+          return a.queueId - b.queueId;
+        }
+      });
     });
 
     this.websocketService.queueUpdateEvent().subscribe(() => {
