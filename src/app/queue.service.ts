@@ -17,25 +17,22 @@ export class QueueService {
     email: string = '',
     contactNumber: string = ''
   ) {
-    return await this.http.post<HttpResponse<QueueCustomer>>(
-      'http://localhost:3000/queue',
-      {
-        name,
-        email,
-        contactNumber,
-      }
-    );
+    return await this.http.post<HttpResponse<QueueCustomer>>(`${URL}/queue`, {
+      name,
+      email,
+      contactNumber,
+    });
   }
 
   getQueueCustomer(): Observable<any[]> {
-    return this.http.get<any[]>('http://localhost:3000/queue');
+    return this.http.get<any[]>(`${URL}/queue`);
   }
 
   getConfig(): Observable<any[]> {
-    return this.http.get<any[]>('http://localhost:3000/display');
+    return this.http.get<any[]>(`${URL}/display`);
   }
 
   getTerminalList(): Observable<any[]> {
-    return this.http.get<any[]>('http://localhost:3000/terminal');
+    return this.http.get<any[]>(`${URL}/terminal`);
   }
 }
