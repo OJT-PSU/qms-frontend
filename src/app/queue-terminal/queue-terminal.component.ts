@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { QueueService } from '../queue.service';
+import { AdminService } from '../service/admin.service';
 
 @Component({
   selector: 'app-queue-terminal',
@@ -10,21 +10,15 @@ import { QueueService } from '../queue.service';
 })
 export class QueueTerminalComponent {
   list: any[] = [];
-  constructor(private queueService: QueueService) {}
+  constructor(private adminService: AdminService) {}
 
   ngOnInit(): void {
     this.getTerminal();
   }
 
   getTerminal(): void {
-    this.queueService.getTerminalList().subscribe(
-      (response) => {
-        console.log(response);
-        this.list = response;
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
+    this.adminService.getAllTerminals().subscribe((response) => {
+      this.list = response;
+    });
   }
 }
