@@ -24,9 +24,7 @@ export class QueueDisplayComponent implements OnInit {
           if (a.queueStatus !== b.queueStatus) {
             return a.queueStatus.localeCompare(b.queueStatus);
           } else {
-            return (
-              new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-            );
+            return a.queueId - b.queueId;
           }
         });
       },
@@ -40,7 +38,7 @@ export class QueueDisplayComponent implements OnInit {
     this.queueService.getConfig().subscribe(
       (response) => {
         console.log(response);
-        const {  dispMsg, scrollTime } = response[0];
+        const { dispMsg, scrollTime } = response[0];
         // this.animation = `scroll-left ${scrollTime} ease-in-out infinite`;
         this.animation = scrollTime;
         this.text = dispMsg;
