@@ -40,7 +40,7 @@ export class QueueDisplayComponent implements OnInit {
     this.queueService.getConfig().subscribe(
       (response) => {
         console.log(response);
-        const { displayId, dispMsg, scrollTime } = response[0];
+        const {  dispMsg, scrollTime } = response[0];
         // this.animation = `scroll-left ${scrollTime} ease-in-out infinite`;
         this.animation = scrollTime;
         this.text = dispMsg;

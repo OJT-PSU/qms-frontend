@@ -12,24 +12,30 @@ const URL = environment.apiUrl;
 })
 export class QueueService {
   constructor(private http: HttpClient) {}
-  private configUrl = '../assets/Config.ini';
   async createQueueCustomer(
     name: string,
     email: string = '',
     contactNumber: string = ''
   ) {
-    return await this.http.post<HttpResponse<QueueCustomer>>(`${URL}/queue`, {
-      name,
-      email,
-      contactNumber,
-    });
+    return await this.http.post<HttpResponse<QueueCustomer>>(
+      'http://localhost:3000/queue',
+      {
+        name,
+        email,
+        contactNumber,
+      }
+    );
   }
 
   getQueueCustomer(): Observable<any[]> {
-    return this.http.get<any[]>(`${URL}/queue`);
+    return this.http.get<any[]>('http://localhost:3000/queue');
   }
 
   getConfig(): Observable<any[]> {
-    return this.http.get<any[]>(`${URL}/display`);
+    return this.http.get<any[]>('http://localhost:3000/display');
+  }
+
+  getTerminalList(): Observable<any[]> {
+    return this.http.get<any[]>('http://localhost:3000/terminal');
   }
 }

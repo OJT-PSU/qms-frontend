@@ -8,6 +8,9 @@
       transform: translateX(-100%);
     }
   }
+  .scroll {
+    animation: scroll-left 30s linear infinite;
+  }
 </style>
 <div class="main">
   <div class="container">
@@ -40,13 +43,11 @@
       <div class="video">
         <video src="../../assets/sample_video.mp4" autoplay muted></video>
       </div>
+      <div class="time"></div>
     </div>
   </div>
   <div class="parent-scroll">
-    <div
-      class="scroll"
-      [style.animation]="' scroll-left ' + animation + ' ease-in-out infinite'"
-    >
+    <div class="scroll" [style.animation-duration]="animation">
       <p>{{ text }}</p>
     </div>
   </div>
