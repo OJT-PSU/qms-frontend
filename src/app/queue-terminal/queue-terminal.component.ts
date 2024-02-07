@@ -218,7 +218,6 @@ export class QueueTerminalComponent {
 
   showSuccess() {
     this.messageService.add({
-      key: 'successEvent',
       severity: 'success',
       summary: 'Success',
       detail: `A new terminal has been added!`,
@@ -227,7 +226,6 @@ export class QueueTerminalComponent {
 
   showError(err: HttpErrorResponse) {
     this.messageService.add({
-      key: 'errorEvent',
       severity: 'error',
       summary: 'Error',
       detail: `${err.error.message}`,
