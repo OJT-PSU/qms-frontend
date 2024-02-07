@@ -146,6 +146,18 @@
   border: none;
   border-left: 2px solid white;
 }
+
+@keyframes blinkTime {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
 .time p {
   margin: 0;
+}
+.blink {
+  animation: blinkTime 0.5s linear infinite;
 }
