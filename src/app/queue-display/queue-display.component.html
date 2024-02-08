@@ -8,10 +8,12 @@
       transform: translateX(-100%);
     }
   }
+
   .scroll {
     animation: scroll-left 30s linear infinite;
   }
 </style>
+
 <div class="main">
   <div class="container">
     <div class="left">
@@ -41,14 +43,16 @@
         <img src="../../assets/capitol.png" alt="capitol-logo" />
       </div>
       <div class="video">
-        <video src="../../assets/sample_video.mp4" autoplay muted></video>
+        <!-- <video src="../../assets/sample_video.mp4" autoplay muted></video> -->
       </div>
-      <div class="time"></div>
     </div>
   </div>
   <div class="parent-scroll">
     <div class="scroll" [style.animation-duration]="animation">
       <p>{{ text }}</p>
+    </div>
+    <div class="time">
+      <p>{{ getHour }} <span class="blink">:</span> {{ getMins }} {{ amPm }}</p>
     </div>
   </div>
 </div>

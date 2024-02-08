@@ -1,5 +1,4 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { QueueDisplayComponent } from './queue-display.component';
 
 describe('QueueDisplayComponent', () => {
@@ -8,10 +7,9 @@ describe('QueueDisplayComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [QueueDisplayComponent]
-    })
-    .compileComponents();
-    
+      imports: [QueueDisplayComponent],
+    }).compileComponents();
+
     fixture = TestBed.createComponent(QueueDisplayComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

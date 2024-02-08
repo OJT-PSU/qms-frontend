@@ -4,7 +4,7 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
+  align-items: baseline;
   position: fixed;
 }
 .container {
@@ -125,10 +125,39 @@
   position: absolute;
   bottom: 0;
   top: 0;
-  gap: 2em;
+  left: -1;
 }
 .scroll p {
   white-space: nowrap;
   width: auto;
   font-size: 3em;
+}
+.time {
+  background-color: #0070c0;
+  width: 6em;
+  height: 100%;
+  position: absolute;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 3em;
+  color: white;
+  border: none;
+  border-left: 2px solid white;
+}
+
+@keyframes blinkTime {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+.time p {
+  margin: 0;
+}
+.blink {
+  animation: blinkTime 0.5s linear infinite;
 }
