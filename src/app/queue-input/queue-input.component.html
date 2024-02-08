@@ -7,37 +7,34 @@
     <h3 class="input-heading">Queue Form</h3>
     <img class="logos" src="../../assets/capitol.png" alt="QMS Logo" />
   </div>
-  <div class="form-container">
-    <form [formGroup]="queueForm" class="input-form">
-      <label class="form-label" for="name"> Nickname: </label>
+  <div class="form-container" [formGroup]="queueForm">
+    <div class="flex flex-column gap-1">
+      <label for="nickname">Nickname</label>
       <input
-        placeholder="Enter your name"
-        class="form-input"
-        type="text"
+        pInputText
+        id="nickname"
+        aria-describedby="nickname-help"
         formControlName="name"
       />
-      <label class="form-label" for="email"> Email: </label>
+    </div>
+    <div class="flex flex-column gap-1">
+      <label for="email">Email (Optional)</label>
       <input
-        placeholder="Enter your email"
-        class="form-input"
-        type="email"
+        pInputText
+        id="email"
+        aria-describedby="email-help"
         formControlName="email"
       />
-      <label class="form-label" for="contactNumber"> Phone No.: </label>
+    </div>
+    <div class="flex flex-column gap-1">
+      <label for="contactNumber">Phone Number (Optional)</label>
       <input
-        placeholder="Enter your number"
-        class="form-input"
-        type="text"
+        pInputText
+        id="contactNumber"
+        aria-describedby="contactNumber-help"
         formControlName="contactNumber"
       />
-      <button
-        type="button"
-        pButton
-        pRipple
-        class="input-button"
-        label="Submit"
-        (click)="postData()"
-      ></button>
-    </form>
+    </div>
+    <button pButton pRipple label="Submit" (click)="postData()"></button>
   </div>
 </div>

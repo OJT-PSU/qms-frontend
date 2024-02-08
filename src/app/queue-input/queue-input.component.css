@@ -9,7 +9,6 @@
 
   position: relative;
   background-color: white;
-  color: black;
   padding: 0;
   margin: 0;
 }
@@ -54,8 +53,9 @@
   flex-direction: column;
   /* flex-grow: 1; */
   align-self: center;
+  gap: 2em;
 
-  background-color: #f6f5f5;
+  background-color: white;
   width: min(25rem, 100%);
   margin: 0 0 5rem 0;
   padding: 2rem;
@@ -78,7 +78,6 @@
   border-radius: 0.5rem;
   border: 1px solid rgba(0, 0, 0, 0.5);
   background-color: white;
-  color: black;
 }
 
 .input-button {
@@ -99,7 +98,6 @@
 
 .input-button:disabled {
   background-color: #cbcbcb;
-  color: black;
   border: 1px solid rgba(0, 0, 0, 0);
 }
 

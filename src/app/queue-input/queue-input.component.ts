@@ -5,14 +5,17 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import { catchError, throwError } from 'rxjs';
 import { QueueService } from '../queue.service';
 import { RouterLink } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
-import { ToastModule } from 'primeng/toast';
+
 import { MessageService, PrimeNGConfig } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
 import { RippleModule } from 'primeng/ripple';
 import { ButtonModule } from 'primeng/button';
-import { catchError, throwError } from 'rxjs';
+import { InputTextModule } from 'primeng/inputtext';
+import { TransactionType } from '../interfaces/queueCustomer';
 
 @Component({
   selector: 'app-queue-input',
@@ -23,6 +26,7 @@ import { catchError, throwError } from 'rxjs';
     ToastModule,
     RippleModule,
     ButtonModule,
+    InputTextModule,
   ],
   providers: [MessageService],
   templateUrl: './queue-input.component.html',
@@ -33,6 +37,7 @@ export class QueueInputComponent {
     name: new FormControl('', Validators.required),
     email: new FormControl(''),
     contactNumber: new FormControl(''),
+    transactionType: new FormControl<TransactionType>('checkReleasing'),
   });
 
   constructor(
@@ -46,14 +51,17 @@ export class QueueInputComponent {
   }
 
   async postData() {
-    const { name, email, contactNumber } = this.queueForm.value;
-    // this.showSuccess('hello');
+    let { name, email, contactNumber, transactionType } = this.queueForm.value;
+    email = email !== '' ? email : undefined;
+    contactNumber = contactNumber !== '' ? contactNumber : undefined;
+    console.log(name, email, contactNumber, transactionType);
 
     if (this.queueForm.valid) {
       const observable = await this.service.createQueueCustomer(
         name ?? '',
-        email ?? '',
-        contactNumber ?? ''
+        email,
+        contactNumber,
+        transactionType
       );
 
       observable
@@ -67,7 +75,12 @@ export class QueueInputComponent {
           next: (config) => {
             console.log({ config });
             this.showSuccess();
-            this.queueForm.setValue({ name: '', email: '', contactNumber: '' });
+            this.queueForm.setValue({
+              name: '',
+              email: '',
+              contactNumber: '',
+              transactionType: 'checkReleasing',
+            });
           },
           error: (error) => {
             // Handle any errors that might happen after catchError

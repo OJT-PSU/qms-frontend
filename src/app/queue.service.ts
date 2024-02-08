@@ -1,7 +1,7 @@
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { QueueCustomer } from './interfaces/queueCustomer';
+import { QueueCustomer, TransactionType } from './interfaces/queueCustomer';
 
 import { environment } from '../environments/environment.development';
 
@@ -14,13 +14,15 @@ export class QueueService {
   constructor(private http: HttpClient) {}
   async createQueueCustomer(
     name: string,
-    email: string = '',
-    contactNumber: string = ''
+    email?: string | null,
+    contactNumber?: string | null,
+    transactionType?: TransactionType | null
   ) {
     return await this.http.post<HttpResponse<QueueCustomer>>(`${URL}/queue`, {
       name,
       email,
       contactNumber,
+      transactionType,
     });
   }
 
