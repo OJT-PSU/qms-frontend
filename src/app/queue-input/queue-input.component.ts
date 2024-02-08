@@ -5,19 +5,23 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { catchError, throwError } from 'rxjs';
-import { QueueService } from '../queue.service';
 import { RouterLink } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
+import { CommonModule } from '@angular/common';
+import { NgClass } from '@angular/common';
+
+import { TransactionType } from '../interfaces/queueCustomer';
+import { QueueService } from '../queue.service';
+import { catchError, throwError } from 'rxjs';
 
 import { MessageService, PrimeNGConfig } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { RippleModule } from 'primeng/ripple';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
-import { TransactionType } from '../interfaces/queueCustomer';
-import { CommonModule } from '@angular/common';
-import { NgClass } from '@angular/common';
+import { CardModule } from 'primeng/card';
+import { DropdownModule } from 'primeng/dropdown';
+import { CheckboxModule } from 'primeng/checkbox';
 
 @Component({
   selector: 'app-queue-input',
@@ -31,6 +35,9 @@ import { NgClass } from '@angular/common';
     InputTextModule,
     CommonModule,
     NgClass,
+    CardModule,
+    DropdownModule,
+    CheckboxModule,
   ],
   providers: [MessageService],
   templateUrl: './queue-input.component.html',
@@ -41,9 +48,16 @@ export class QueueInputComponent {
     name: new FormControl<string>('', Validators.required),
     email: new FormControl(''),
     contactNumber: new FormControl(''),
-    transactionType: new FormControl<TransactionType>('checkReleasing'),
+    transactionType: new FormControl<TransactionType | null>(null),
+    privacyAgreement: new FormControl<boolean>(false),
   });
   submitAttempted: boolean = false;
+  currentPage = 1;
+  transactions: Array<{ label: string; value: TransactionType }> = [
+    { label: 'Payment', value: 'payment' },
+    { label: 'Check Releasing', value: 'checkReleasing' },
+    { label: 'Inquiry', value: 'inquiry' },
+  ];
 
   constructor(
     private service: QueueService,
@@ -86,6 +100,7 @@ export class QueueInputComponent {
               email: '',
               contactNumber: '',
               transactionType: 'checkReleasing',
+              privacyAgreement: false,
             });
             this.submitAttempted = false;
           },
@@ -113,5 +128,13 @@ export class QueueInputComponent {
       summary: 'Error',
       detail: `${err.error.message}`,
     });
+  }
+
+  goToPageOne() {
+    this.currentPage = 1;
+  }
+
+  goToPageTwo() {
+    this.currentPage = 2;
   }
 }
