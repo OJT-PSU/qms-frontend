@@ -15,6 +15,7 @@
         id="nickname"
         aria-describedby="nickname-help"
         formControlName="name"
+        [class.ng-invalid]="submitAttempted && queueForm.value.name === ''"
       />
     </div>
     <div class="flex flex-column gap-1">

@@ -16,6 +16,8 @@ import { RippleModule } from 'primeng/ripple';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { TransactionType } from '../interfaces/queueCustomer';
+import { CommonModule } from '@angular/common';
+import { NgClass } from '@angular/common';
 
 @Component({
   selector: 'app-queue-input',
@@ -27,6 +29,8 @@ import { TransactionType } from '../interfaces/queueCustomer';
     RippleModule,
     ButtonModule,
     InputTextModule,
+    CommonModule,
+    NgClass,
   ],
   providers: [MessageService],
   templateUrl: './queue-input.component.html',
@@ -34,11 +38,12 @@ import { TransactionType } from '../interfaces/queueCustomer';
 })
 export class QueueInputComponent {
   queueForm = new FormGroup({
-    name: new FormControl('', Validators.required),
+    name: new FormControl<string>('', Validators.required),
     email: new FormControl(''),
     contactNumber: new FormControl(''),
     transactionType: new FormControl<TransactionType>('checkReleasing'),
   });
+  submitAttempted: boolean = false;
 
   constructor(
     private service: QueueService,
@@ -51,6 +56,7 @@ export class QueueInputComponent {
   }
 
   async postData() {
+    this.submitAttempted = true;
     let { name, email, contactNumber, transactionType } = this.queueForm.value;
     email = email !== '' ? email : undefined;
     contactNumber = contactNumber !== '' ? contactNumber : undefined;
@@ -81,6 +87,7 @@ export class QueueInputComponent {
               contactNumber: '',
               transactionType: 'checkReleasing',
             });
+            this.submitAttempted = false;
           },
           error: (error) => {
             // Handle any errors that might happen after catchError
