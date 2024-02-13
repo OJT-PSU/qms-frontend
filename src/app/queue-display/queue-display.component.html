@@ -30,7 +30,12 @@
             }
           </p>
         </li>
-        } }
+        } } @if(!hasWaiting){
+        <li class="waiting">
+          <p>Empty Queue</p>
+          <p></p>
+        </li>
+        }
       </ul>
     </div>
     <div class="right">
@@ -43,7 +48,7 @@
         <img src="../../assets/capitol.png" alt="capitol-logo" />
       </div>
       <div class="video">
-        <!-- <video src="../../assets/sample_video.mp4" autoplay muted></video> -->
+        <video [src]="videoUrl" id="video" autoplay muted></video>
       </div>
     </div>
   </div>

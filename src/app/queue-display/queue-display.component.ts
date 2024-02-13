@@ -14,6 +14,8 @@ export class QueueDisplayComponent implements OnInit {
   fetchData: any[] = [];
   text: string = '';
   animation: string = '';
+  videoUrl: string = '';
+  hasWaiting: Boolean = false;
 
   amPm: string = moment().format('A');
   getHour: string = moment().format('HH');
@@ -30,15 +32,23 @@ export class QueueDisplayComponent implements OnInit {
   ngOnInit(): void {
     this.getData();
     this.getConfig();
-    this.sound.play();
+    const videoElement = document.querySelector('video');
+    if (videoElement) {
+      videoElement.volume = 0;
+    }
     this.websocketService.getQueue().subscribe((response) => {
+      this.sound.play();
       this.data = response.sort((a, b) => {
+        if (a.queueStatus == 'waiting') {
+          this.hasWaiting = true;
+        }
         if (a.queueStatus !== b.queueStatus) {
           return a.queueStatus.localeCompare(b.queueStatus);
         } else {
           return a.queueId - b.queueId;
         }
       });
+      console.log(this.hasWaiting);
     });
 
     this.websocketService.queueUpdateEvent().subscribe(() => {
@@ -55,12 +65,16 @@ export class QueueDisplayComponent implements OnInit {
     this.queueService.getQueueCustomer().subscribe(
       (response) => {
         this.data = response.sort((a, b) => {
+          if (a.queueStatus == 'waiting') {
+            this.hasWaiting = true;
+          }
           if (a.queueStatus !== b.queueStatus) {
             return a.queueStatus.localeCompare(b.queueStatus);
           } else {
             return a.queueId - b.queueId;
           }
         });
+        console.log(this.hasWaiting);
       },
       (error) => {
         console.error('Error fetching data:', error);
@@ -72,8 +86,8 @@ export class QueueDisplayComponent implements OnInit {
     this.queueService.getConfig().subscribe(
       (response) => {
         console.log(response);
-        const { dispMsg, scrollTime } = response[0];
-        // this.animation = `scroll-left ${scrollTime} ease-in-out infinite`;
+        const { dispMsg, scrollTime, video } = response[0];
+        this.videoUrl = '../../assets/' + video;
         this.animation = scrollTime;
         this.text = dispMsg;
       },

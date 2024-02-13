@@ -4,7 +4,7 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: baseline;
+  align-items: center;
   position: fixed;
 }
 .container {
@@ -33,9 +33,11 @@
   text-align: center;
 }
 .logo-name h1 {
-  font-size: 3em;
+  font-size: 2.5em;
+  margin: 0;
 }
 .logo-name p {
+  margin: 0;
   font-size: 1.5em;
 }
 .logo img {
@@ -76,8 +78,9 @@
   animation: blink 5s infinite;
 }
 .waiting {
-  background-color: #bfe1f8;
-  color: white;
+  background-color: #ffffff;
+  border: 1px solid black;
+  color: black;
 }
 @keyframes blink {
   0% {
