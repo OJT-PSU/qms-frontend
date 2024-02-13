@@ -115,6 +115,8 @@ export class QueueInputComponent {
               console.error('An error occurred:', error);
             },
           });
+      } else {
+        this.showRequiredError();
       }
     }
   }
@@ -125,6 +127,15 @@ export class QueueInputComponent {
       severity: 'success',
       summary: 'Success',
       detail: `You have been added to the queue!`,
+    });
+  }
+
+  showRequiredError() {
+    this.messageService.add({
+      key: 'errorEvent',
+      severity: 'error',
+      summary: 'Error',
+      detail: `Please fill in the required field (Name and Transaction Type)`,
     });
   }
 
