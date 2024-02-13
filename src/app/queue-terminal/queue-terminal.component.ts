@@ -18,6 +18,7 @@ import { ConfirmationService } from 'primeng/api';
 import { InputTextareaModule } from 'primeng/inputtextarea';
 import { HttpErrorResponse } from '@angular/common/http';
 import { catchError, throwError } from 'rxjs';
+import { TransactionType } from '../interfaces/queueCustomer';
 
 type AdminStatus = 'active' | 'inactive';
 
@@ -26,6 +27,7 @@ interface Terminal {
   status: AdminStatus;
   remarks: string;
   terminalId: number;
+  transactionType: TransactionType;
   isEditing: boolean;
 }
 
@@ -34,6 +36,7 @@ interface TerminalDialog {
   status?: AdminStatus;
   remarks?: string;
   terminalId?: number;
+  transactionType?: TransactionType;
   isEditing?: boolean;
 }
 
@@ -74,6 +77,12 @@ export class QueueTerminalComponent {
     { label: 'Inactive', value: 'inactive' },
   ];
 
+  transactions: Array<{ label: string; value: TransactionType }> = [
+    { label: 'Payment', value: 'payment' },
+    { label: 'Check Releasing', value: 'checkReleasing' },
+    { label: 'Inquiry', value: 'inquiry' },
+  ];
+
   constructor(
     private adminService: AdminService,
     private messageService: MessageService,
@@ -82,6 +91,16 @@ export class QueueTerminalComponent {
 
   ngOnInit(): void {
     this.getTerminal();
+  }
+
+  getValueByLabel(value: TransactionType) {
+    const transaction = this.transactions.find((t) => t.value === value);
+    return transaction ? transaction.label : null;
+  }
+
+  getStatusByValue(value: AdminStatus) {
+    const status = this.newStatuses.find((s) => s.value === value);
+    return status.label;
   }
 
   getTerminal(): void {
@@ -104,15 +123,21 @@ export class QueueTerminalComponent {
 
   onRowEditSave(terminal: Terminal) {
     terminal.isEditing = false;
-    const { terminalName, status, remarks, terminalId } = terminal;
+    const { terminalName, status, remarks, terminalId, transactionType } =
+      terminal;
+    console.log(terminal);
     this.adminService
-      .updateTerminal(terminalId, terminalName, status, remarks)
+      .updateTerminal(
+        terminalId,
+        terminalName,
+        status,
+        remarks,
+        transactionType
+      )
       .subscribe((response) => {
         console.log(response);
         this.getTerminal();
       });
-    // Here, you would typically send the updated data back to the server
-    // And then possibly fetch the updated list or update the UI accordingly
   }
 
   onRowEditCancel(terminal: Terminal) {
@@ -140,10 +165,10 @@ export class QueueTerminalComponent {
   saveProduct() {
     this.submitted = true;
     console.log(this.terminal);
-    const { terminalName, status, remarks } = this.terminal;
+    const { terminalName, status, remarks, transactionType } = this.terminal;
 
     this.adminService
-      .createTerminal(terminalName, status, remarks)
+      .createTerminal(terminalName, status, remarks, transactionType)
       .pipe(
         catchError((error) => {
           this.showError(error);
@@ -193,27 +218,24 @@ export class QueueTerminalComponent {
   }
 
   deleteSelectedTerminals() {
-    const ids = this.selectedTerminals.map((t) => t.terminalId);
-    this.adminService.deleteTerminals(ids).subscribe((response) => {
-      console.log({ response });
-      this.getTerminal();
+    this.confirmationService.confirm({
+      message: 'Are you sure you want to delete the selected terminals?',
+      header: 'Confirm',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        const ids = this.selectedTerminals.map((t) => t.terminalId);
+        this.adminService.deleteTerminals(ids).subscribe((response) => {
+          console.log({ response });
+          this.getTerminal();
+        });
+        this.messageService.add({
+          severity: 'info',
+          summary: 'Successful',
+          detail: 'Terminals Deleted',
+          life: 3000,
+        });
+      },
     });
-    // this.confirmationService.confirm({
-    //   message: 'Are you sure you want to delete the selected products?',
-    //   header: 'Confirm',
-    //   icon: 'pi pi-exclamation-triangle',
-    //   accept: () => {
-    //     // this.products = this.products.filter(val => !this.selectedProducts.includes(val));
-    //     // this.selectedProducts = null;
-    //     console.log('noice');
-    //     this.messageService.add({
-    //       severity: 'success',
-    //       summary: 'Successful',
-    //       detail: 'Products Deleted',
-    //       life: 3000,
-    //     });
-    //   },
-    // });
   }
 
   showSuccess() {

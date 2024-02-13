@@ -1,4 +1,5 @@
 <p-toast></p-toast>
+<p-confirmDialog></p-confirmDialog>
 <p-toolbar styleClass="mb-4 gap-2">
   <ng-template pTemplate="left">
     <button
@@ -36,6 +37,7 @@
       <th style="width: 20%">Terminal Name</th>
       <th style="width: 20%">Remarks</th>
       <th style="width: 20%">Status</th>
+      <th style="width: 20%">Transaction Type</th>
       <th style="width: 20%"></th>
     </tr>
   </ng-template>
@@ -73,14 +75,29 @@
         <p-cellEditor>
           <ng-template pTemplate="input">
             <p-dropdown
-              [options]="statuses"
+              [options]="newStatuses"
               appendTo="body"
               [(ngModel)]="terminal.status"
               [style]="{ width: '100%' }"
             ></p-dropdown>
           </ng-template>
           <ng-template pTemplate="output">
-            {{ terminal.status }}
+            {{ getStatusByValue(terminal.status) }}
+          </ng-template>
+        </p-cellEditor>
+      </td>
+      <td>
+        <p-cellEditor>
+          <ng-template pTemplate="input">
+            <p-dropdown
+              [options]="transactions"
+              appendTo="body"
+              [(ngModel)]="terminal.transactionType"
+              [style]="{ width: '100%' }"
+            ></p-dropdown>
+          </ng-template>
+          <ng-template pTemplate="output">
+            {{ getValueByLabel(terminal.transactionType) }}
           </ng-template>
         </p-cellEditor>
       </td>
@@ -124,7 +141,7 @@
 
 <p-dialog
   [(visible)]="terminalDialog"
-  [style]="{ width: '450px' }"
+  [style]="{ width: '450px', height: '600px' }"
   header="Terminal Details"
   [modal]="true"
   styleClass="p-fluid"
@@ -156,26 +173,37 @@
       ></textarea>
     </div>
 
+    <div class="field">
+      <label>Transaction Type</label>
+      <p-dropdown
+        [options]="transactions"
+        [(ngModel)]="terminal.transactionType"
+        optionLabel="label"
+        optionValue="value"
+        placeholder="Select Transaction Type"
+      ></p-dropdown>
+    </div>
+
     <div class="p-field">
       <label class="p-mb-3">Status</label>
       <div class="p-formgrid p-grid">
-        <div class="p-field-radiobutton p-col-6">
+        <div class="p-field-radiobutton p-col-6 mt-2">
           <p-radioButton
             id="status2"
             name="status"
             value="active"
             [(ngModel)]="terminal.status"
           ></p-radioButton>
-          <label for="status2">active</label>
+          <label for="status2" class="ml-2">Active</label>
         </div>
-        <div class="p-field-radiobutton p-col-6">
+        <div class="p-field-radiobutton p-col-6 mt-2">
           <p-radioButton
             id="status2"
             name="status"
             value="inactive"
             [(ngModel)]="terminal.status"
           ></p-radioButton>
-          <label for="status2">inactive</label>
+          <label for="status2" class="ml-2">Inactive</label>
         </div>
       </div>
     </div>

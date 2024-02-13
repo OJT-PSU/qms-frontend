@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment.development';
 import { Observable } from 'rxjs';
+import { TransactionType } from '../interfaces/queueCustomer';
 
 const URL = environment.apiUrl;
 type AdminStatus = 'active' | 'inactive';
@@ -20,12 +21,14 @@ export class AdminService {
     id: number,
     terminalName: string,
     status: AdminStatus,
-    remarks: string
+    remarks: string,
+    transactionType: TransactionType
   ) {
     const data = {
       terminalName,
       status,
       remarks,
+      transactionType,
     };
 
     return this.http.patch<any>(`${URL}/terminal/${id}`, data);
@@ -42,12 +45,14 @@ export class AdminService {
   createTerminal(
     terminalName?: string,
     status?: AdminStatus,
-    remarks?: string
+    remarks?: string,
+    transactionType?: TransactionType
   ) {
     const data = {
       terminalName,
       status,
       remarks,
+      transactionType,
     };
 
     return this.http.post<any>(`${URL}/terminal`, data);
