@@ -71,44 +71,51 @@ export class QueueInputComponent {
 
   async postData() {
     this.submitAttempted = true;
-    let { name, email, contactNumber, transactionType } = this.queueForm.value;
-    email = email !== '' ? email : undefined;
-    contactNumber = contactNumber !== '' ? contactNumber : undefined;
-    console.log(name, email, contactNumber, transactionType);
+    if (!this.queueForm.value.privacyAgreement) {
+      this.showPrivacyAgreementToast();
+    } else {
+      let { name, email, contactNumber, transactionType } =
+        this.queueForm.value;
+      email = email !== '' ? email : undefined;
+      contactNumber = contactNumber !== '' ? contactNumber : undefined;
+      console.log(name, email, contactNumber, transactionType);
 
-    if (this.queueForm.valid) {
-      const observable = await this.service.createQueueCustomer(
-        name ?? '',
-        email,
-        contactNumber,
-        transactionType
-      );
+      if (this.queueForm.valid) {
+        const observable = await this.service.createQueueCustomer(
+          name ?? '',
+          email,
+          contactNumber,
+          transactionType
+        );
 
-      observable
-        .pipe(
-          catchError((error) => {
-            this.showError(error);
-            return throwError(() => error);
-          })
-        )
-        .subscribe({
-          next: (config) => {
-            console.log({ config });
-            this.showSuccess();
-            this.queueForm.setValue({
-              name: '',
-              email: '',
-              contactNumber: '',
-              transactionType: 'checkReleasing',
-              privacyAgreement: false,
-            });
-            this.submitAttempted = false;
-          },
-          error: (error) => {
-            // Handle any errors that might happen after catchError
-            console.error('An error occurred:', error);
-          },
-        });
+        observable
+          .pipe(
+            catchError((error) => {
+              this.showError(error);
+              return throwError(() => error);
+            })
+          )
+          .subscribe({
+            next: (config) => {
+              console.log({ config });
+              this.showSuccess();
+              this.queueForm.setValue({
+                name: '',
+                email: '',
+                contactNumber: '',
+                transactionType: 'checkReleasing',
+                privacyAgreement: false,
+              });
+              this.submitAttempted = false;
+              this.currentPage = 1;
+              this.queueForm.value.transactionType = null;
+            },
+            error: (error) => {
+              // Handle any errors that might happen after catchError
+              console.error('An error occurred:', error);
+            },
+          });
+      }
     }
   }
 
@@ -127,6 +134,15 @@ export class QueueInputComponent {
       severity: 'error',
       summary: 'Error',
       detail: `${err.error.message}`,
+    });
+  }
+
+  showPrivacyAgreementToast() {
+    this.messageService.add({
+      key: 'errorEvent',
+      severity: 'warn',
+      summary: 'Error',
+      detail: 'Please agree to the Privacy Policy to proceed.',
     });
   }
 
