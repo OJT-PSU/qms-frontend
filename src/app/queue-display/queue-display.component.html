@@ -1,25 +1,9 @@
-<style>
-  /* Move it (define the animation) */
-  @keyframes scroll-left {
-    0% {
-      transform: translateX(100%);
-    }
-    100% {
-      transform: translateX(-100%);
-    }
-  }
-
-  .scroll {
-    animation: scroll-left 30s linear infinite;
-  }
-</style>
-
 <div class="main">
   <div class="container">
     <div class="left">
       <ul class="list">
         @for (customer of data; track customer.queueId){ @if
-        (customer.queueStatus!="accommodated"){
+        (customer.queueStatus!="accommodated" || customer.toDisplay==0){
         <li [class]="customer.queueStatus">
           <p>
             {{ customer.name }}
@@ -48,7 +32,7 @@
         <img src="../../assets/capitol.png" alt="capitol-logo" />
       </div>
       <div class="video">
-        <video [src]="videoUrl" id="video" autoplay muted></video>
+        <video [src]="videoUrl" id="video" autoplay muted loop></video>
       </div>
     </div>
   </div>

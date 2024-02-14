@@ -37,7 +37,8 @@ export class QueueDisplayComponent implements OnInit {
       videoElement.volume = 0;
     }
     this.websocketService.getQueue().subscribe((response) => {
-      this.sound.play();
+      let hasAlreadyPlayed = false;
+
       this.data = response.sort((a, b) => {
         if (a.queueStatus == 'waiting') {
           this.hasWaiting = true;
@@ -46,6 +47,12 @@ export class QueueDisplayComponent implements OnInit {
           return a.queueStatus.localeCompare(b.queueStatus);
         } else {
           return a.queueId - b.queueId;
+        }
+      });
+      this.data.forEach((item) => {
+        if (item.queueStatus == 'ongoing' && !hasAlreadyPlayed) {
+          this.sound.play();
+          hasAlreadyPlayed = true;
         }
       });
       console.log(this.hasWaiting);
@@ -64,6 +71,8 @@ export class QueueDisplayComponent implements OnInit {
   getData(): void {
     this.queueService.getQueueCustomer().subscribe(
       (response) => {
+        let hasAlreadyPlayed = false;
+
         this.data = response.sort((a, b) => {
           if (a.queueStatus == 'waiting') {
             this.hasWaiting = true;
@@ -72,6 +81,12 @@ export class QueueDisplayComponent implements OnInit {
             return a.queueStatus.localeCompare(b.queueStatus);
           } else {
             return a.queueId - b.queueId;
+          }
+        });
+        this.data.forEach((item) => {
+          if (item.queueStatus == 'ongoing' && !hasAlreadyPlayed) {
+            this.sound.play();
+            hasAlreadyPlayed = true;
           }
         });
         console.log(this.hasWaiting);

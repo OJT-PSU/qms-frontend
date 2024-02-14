@@ -136,7 +136,7 @@
   font-size: 3em;
 }
 .time {
-  background-color: #0070c0;
+  background-color: #000000;
   width: 6em;
   height: 100%;
   position: absolute;
@@ -147,7 +147,6 @@
   font-size: 3em;
   color: white;
   border: none;
-  border-left: 2px solid white;
 }
 
 @keyframes blinkTime {
@@ -163,4 +162,18 @@
 }
 .blink {
   animation: blinkTime 0.5s linear infinite;
+}
+
+/* Move it (define the animation) */
+@keyframes scroll-left {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+.scroll {
+  animation: scroll-left 30s linear infinite;
 }
