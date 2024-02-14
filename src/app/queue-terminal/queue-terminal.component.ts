@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AdminService } from '../service/admin.service';
+import { QueueService } from '../queue.service';
 import { MessageService } from 'primeng/api';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -86,6 +87,7 @@ export class QueueTerminalComponent {
   constructor(
     private adminService: AdminService,
     private messageService: MessageService,
+    private queueService: QueueService,
     private confirmationService: ConfirmationService
   ) {}
 
@@ -233,6 +235,25 @@ export class QueueTerminalComponent {
           summary: 'Successful',
           detail: 'Terminals Deleted',
           life: 3000,
+        });
+      },
+    });
+  }
+
+  resetQueue() {
+    this.confirmationService.confirm({
+      message: 'Are you sure you want to reset the queue?',
+      header: 'Confirm',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        const ids = this.selectedTerminals.map((t) => t.terminalId);
+        this.queueService.updateToDisplayList().subscribe((config) => {
+          this.messageService.add({
+            severity: 'info',
+            summary: 'Successful',
+            detail: 'Queue Reset',
+            life: 3000,
+          });
         });
       },
     });

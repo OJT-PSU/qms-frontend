@@ -3,7 +3,7 @@
     <div class="left">
       <ul class="list">
         @for (customer of data; track customer.queueId){ @if
-        (customer.queueStatus!="accommodated" || customer.toDisplay==0){
+        (customer.queueStatus !="accommodated" && customer.toDisplay==0){
         <li [class]="customer.queueStatus">
           <p>
             {{ customer.name }}

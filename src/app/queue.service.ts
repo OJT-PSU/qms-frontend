@@ -37,4 +37,8 @@ export class QueueService {
   getTerminalList(): Observable<any[]> {
     return this.http.get<any[]>(`${URL}/terminal`);
   }
+
+  updateToDisplayList(): Observable<any[]> {
+    return this.http.patch<any>(`${URL}/queue/reset-queue`, {});
+  }
 }

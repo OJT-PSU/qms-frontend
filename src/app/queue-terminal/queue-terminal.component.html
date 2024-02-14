@@ -19,6 +19,14 @@
       (click)="deleteSelectedTerminals()"
       [disabled]="!selectedTerminals || !selectedTerminals.length"
     ></button>
+    <button
+      pButton
+      pRipple
+      label="Reset Queue"
+      icon="pi pi-refresh"
+      class="p-button-help ml-2"
+      (click)="resetQueue()"
+    ></button>
   </ng-template>
 </p-toolbar>
 <p-table
