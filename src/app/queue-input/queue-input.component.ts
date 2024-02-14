@@ -22,6 +22,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { CardModule } from 'primeng/card';
 import { DropdownModule } from 'primeng/dropdown';
 import { CheckboxModule } from 'primeng/checkbox';
+import { ListboxModule } from 'primeng/listbox';
 
 @Component({
   selector: 'app-queue-input',
@@ -38,6 +39,7 @@ import { CheckboxModule } from 'primeng/checkbox';
     CardModule,
     DropdownModule,
     CheckboxModule,
+    ListboxModule,
   ],
   providers: [MessageService],
   templateUrl: './queue-input.component.html',
@@ -53,11 +55,12 @@ export class QueueInputComponent {
   });
   submitAttempted: boolean = false;
   currentPage = 1;
-  transactions: Array<{ label: string; value: TransactionType }> = [
-    { label: 'Payment', value: 'payment' },
-    { label: 'Check Releasing', value: 'checkReleasing' },
-    { label: 'Inquiry', value: 'inquiry' },
-  ];
+  transactions: Array<{ label: string; value: TransactionType; icon: string }> =
+    [
+      { label: 'Payment', value: 'payment', icon: 'pi-credit-card' },
+      { label: 'Check Releasing', value: 'checkReleasing', icon: 'pi-file' },
+      { label: 'Inquiry', value: 'inquiry', icon: 'pi-search' },
+    ];
 
   constructor(
     private service: QueueService,

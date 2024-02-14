@@ -8,7 +8,7 @@
     <img class="logos" src="../../assets/capitol.png" alt="QMS Logo" />
   </div>
   <p-card
-    [style]="{ width: '25rem', height: '29rem' }"
+    [style]="{ width: '25rem' }"
     header="Good day!"
     subheader="Please fill in the details:"
     [formGroup]="queueForm"
@@ -56,15 +56,21 @@
     </div>
     } @if(currentPage === 2) {
 
-    <div class="second-step mt-5">
-      <p-dropdown
+    <div class="second-step">
+      <p-listbox
         [options]="transactions"
         formControlName="transactionType"
         optionLabel="label"
         optionValue="value"
-        placeholder="Select type of transaction:"
-        [style]="{ width: '100%' }"
-      ></p-dropdown>
+        [style]="{ width: '15rem' }"
+      >
+        <ng-template let-transaction pTemplate="transaction">
+          <div class="flex align-items-center">
+            <i [class]="'pi ' + transaction.icon"></i>
+            <span class="ml-2">{{ transaction.label }}</span>
+          </div>
+        </ng-template>
+      </p-listbox>
       <div
         class="mt-5 flex flex-row justify-content-center align-items-center gap-1"
       >
