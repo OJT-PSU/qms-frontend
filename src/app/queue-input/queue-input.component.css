@@ -115,12 +115,15 @@
   .heading {
     position: relative;
     width: 75vw;
-    left: 50%;
-    transform: translateX(-50%);
   }
 
   .heading .logos {
     height: 110px;
     aspect-ratio: 1;
+  }
+
+  p-card {
+    scale: 1.25;
+    margin-top: 3em;
   }
 }
