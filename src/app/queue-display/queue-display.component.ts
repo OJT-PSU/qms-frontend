@@ -16,6 +16,9 @@ export class QueueDisplayComponent implements OnInit {
   animation: string = '';
   videoUrl: string = '';
   hasWaiting: Boolean = false;
+  month: string = '';
+  day: string = '';
+  year: string = '';
 
   amPm: string = moment().format('A');
   getHour: string = moment().format('HH');
@@ -70,6 +73,9 @@ export class QueueDisplayComponent implements OnInit {
       this.getHour = moment().format('h');
       this.getMins = moment().format('mm');
     }, 1000);
+    this.month = moment().format('MMMM');
+    this.day = moment().format('DD');
+    this.year = moment().format('YYYY');
   }
 
   getData(): void {
