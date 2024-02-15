@@ -160,11 +160,24 @@ export class QueueInputComponent {
     });
   }
 
+  showNameRequiredToast() {
+    this.messageService.add({
+      key: 'errorEvent',
+      severity: 'error',
+      summary: 'Error',
+      detail: 'Please put a name or nickname.',
+    });
+  }
+
   goToPageOne() {
     this.currentPage = 1;
   }
 
   goToPageTwo() {
-    this.currentPage = 2;
+    if (this.queueForm.value.name === '') {
+      this.showNameRequiredToast();
+    } else {
+      this.currentPage = 2;
+    }
   }
 }
