@@ -38,9 +38,13 @@ export class QueueDisplayComponent implements OnInit {
     }
     this.websocketService.getQueue().subscribe((response) => {
       let hasAlreadyPlayed = false;
+      this.hasWaiting = false;
 
       this.data = response.sort((a, b) => {
-        if (a.queueStatus == 'waiting') {
+        if (
+          a.queueStatus == 'waiting' ||
+          (a.queueStatus == 'ongoing' && a.toDisplay === 0)
+        ) {
           this.hasWaiting = true;
         }
         if (a.queueStatus !== b.queueStatus) {
@@ -72,9 +76,13 @@ export class QueueDisplayComponent implements OnInit {
     this.queueService.getQueueCustomer().subscribe(
       (response) => {
         let hasAlreadyPlayed = false;
+        this.hasWaiting = false;
 
         this.data = response.sort((a, b) => {
-          if (a.queueStatus == 'waiting') {
+          if (
+            a.queueStatus == 'waiting' ||
+            (a.queueStatus == 'ongoing' && a.toDisplay === 0)
+          ) {
             this.hasWaiting = true;
           }
           if (a.queueStatus !== b.queueStatus) {
