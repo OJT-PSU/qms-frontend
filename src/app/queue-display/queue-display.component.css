@@ -162,6 +162,7 @@
 }
 .blink {
   animation: blinkTime 0.5s linear infinite;
+  color: white;
 }
 
 /* Move it (define the animation) */
@@ -176,4 +177,28 @@
 
 .scroll {
   animation: scroll-left 30s linear infinite;
+}
+
+.calendar {
+  width: 100%;
+  padding: 1em;
+  display: flex;
+  flex-direction: row;
+  gap: 1em;
+  background: black;
+  justify-content: center;
+  align-items: center;
+}
+.calendar .date {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 4em;
+  padding: 1em;
+  color: white;
+  box-sizing: border-box;
+}
+.date p {
+  font-size: 3em;
+  box-sizing: border-box;
 }

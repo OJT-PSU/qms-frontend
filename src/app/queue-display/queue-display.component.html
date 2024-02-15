@@ -34,6 +34,17 @@
       <div class="video">
         <video [src]="videoUrl" id="video" autoplay muted loop></video>
       </div>
+      <div class="calendar">
+        <div class="date">
+          <p class="month">{{ month }}</p>
+        </div>
+        <div class="date">
+          <p class="day">{{ day }},</p>
+        </div>
+        <div class="date">
+          <p class="year">{{ year }}</p>
+        </div>
+      </div>
     </div>
   </div>
   <div class="parent-scroll">
