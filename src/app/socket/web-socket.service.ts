@@ -36,4 +36,16 @@ export class WebSocketService {
     });
     return observable;
   }
+
+  queuePingEvent() {
+    let observable = new Observable<any[]>((observer) => {
+      this.socket.on('ping-event', (data: any) => {
+        observer.next(data);
+      });
+      return () => {
+        this.socket.disconnect();
+      };
+    });
+    return observable;
+  }
 }
