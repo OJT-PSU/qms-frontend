@@ -39,6 +39,11 @@ export class QueueDisplayComponent implements OnInit {
     if (videoElement) {
       videoElement.volume = 0;
     }
+
+    this.websocketService.queuePingEvent().subscribe((response) => {
+      console.log(response);
+    });
+
     this.websocketService.getQueue().subscribe((response) => {
       let hasAlreadyPlayed = false;
       this.hasWaiting = false;
