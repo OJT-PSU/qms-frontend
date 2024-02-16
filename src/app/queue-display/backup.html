@@ -5,13 +5,9 @@
         @for (customer of data; track customer.queueId){ @if
         (customer.queueStatus !="accommodated" && customer.toDisplay==0){
         <li [class]="customer.queueStatus">
+          <p>{{ customer.name }}</p>
           <p>
-            {{ customer.name }}
-          </p>
-          <p>
-            @if (customer.queueStatus!="waiting"){
-            {{ customer.terminal }}
-            }
+            @if (customer.queueStatus!="waiting"){ {{ customer.terminal }} }
           </p>
         </li>
         } } @if(!hasWaiting){
@@ -51,7 +47,7 @@
     <div class="scroll" [style.animation-duration]="animation">
       <p>{{ text }}</p>
     </div>
-    <div class="time">
+    <div class="time flex flex-row">
       <p>{{ getHour }} <span class="blink">:</span> {{ getMins }} {{ amPm }}</p>
     </div>
   </div>

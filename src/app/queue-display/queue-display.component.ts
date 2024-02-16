@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { QueueService } from '../queue.service';
 import { WebSocketService } from '../socket/web-socket.service';
 import moment from 'moment';
+import _ from 'lodash';
 import { Howl, Howler } from 'howler';
 @Component({
   selector: 'app-queue-display',
@@ -11,6 +12,10 @@ import { Howl, Howler } from 'howler';
 })
 export class QueueDisplayComponent implements OnInit {
   data: any[] = [];
+  payment: any[] = [];
+  checkReleasing: any[] = [];
+  inquiry: any[] = [];
+
   fetchData: any[] = [];
   text: string = '';
   animation: string = '';
@@ -49,16 +54,20 @@ export class QueueDisplayComponent implements OnInit {
       this.hasWaiting = false;
 
       this.data = response.sort((a, b) => {
-        if (
-          a.queueStatus == 'waiting' ||
-          (a.queueStatus == 'ongoing' && a.toDisplay === 0)
-        ) {
-          this.hasWaiting = true;
-        }
-        if (a.queueStatus !== b.queueStatus) {
-          return a.queueStatus.localeCompare(b.queueStatus);
-        } else {
-          return a.queueId - b.queueId;
+        const dataDate = moment(a.createdAt, 'YYYY-MM-DD');
+        const isSameDate = dataDate.isSame(dataDate);
+        if (isSameDate) {
+          if (
+            a.queueStatus == 'waiting' ||
+            (a.queueStatus == 'ongoing' && a.toDisplay === 0)
+          ) {
+            this.hasWaiting = true;
+          }
+          if (a.queueStatus !== b.queueStatus) {
+            return a.queueStatus.localeCompare(b.queueStatus);
+          } else {
+            return a.queueId - b.queueId;
+          }
         }
       });
       this.data.forEach((item) => {
@@ -67,7 +76,35 @@ export class QueueDisplayComponent implements OnInit {
           hasAlreadyPlayed = true;
         }
       });
-      console.log(this.hasWaiting);
+      let count = 0;
+      this.payment = this.data
+        .map((item, index) => {
+          if (item.transactionType === 'payment') {
+            count += 1;
+            return { ...item, index: index };
+          }
+        })
+        .filter((item) => item !== undefined);
+      count = 0;
+      this.checkReleasing = this.data
+        .map((item, index) => {
+          if (item.transactionType === 'checkReleasing') {
+            count += 1;
+            return { ...item, index: index };
+          }
+        })
+        .filter((item) => item !== undefined);
+      count = 0;
+      this.inquiry = this.data
+        .map((item, index) => {
+          if (item.transactionType === 'inquiry') {
+            count += 1;
+            return { ...item, index: index };
+          }
+        })
+        .filter((item) => item !== undefined);
+
+      console.log('EXECUTED from websocket ');
     });
 
     this.websocketService.queueUpdateEvent().subscribe(() => {
@@ -108,7 +145,59 @@ export class QueueDisplayComponent implements OnInit {
             hasAlreadyPlayed = true;
           }
         });
-        console.log(this.hasWaiting);
+
+        const currentDate = moment().format('YYYY-MM-DD');
+        let count = 0;
+        this.payment = this.data
+          .map((item, index) => {
+            const date = moment(item.createdAt, 'YYYY-MM-DD');
+            if (
+              item.transactionType === 'payment' &&
+              item.toDisplay == 0 &&
+              date.isSame(currentDate, 'day')
+            ) {
+              count += 1;
+
+              return { ...item, index: count };
+            }
+          })
+          .filter((item) => item !== undefined);
+
+        count = 0;
+        this.checkReleasing = this.data
+          .map((item, index) => {
+            const date = moment(item.createdAt, 'YYYY-MM-DD');
+            if (
+              item.transactionType === 'checkReleasing' &&
+              item.toDisplay == 0 &&
+              date.isSame(currentDate, 'day')
+            ) {
+              count += 1;
+              console.log({
+                transaction: item.transactionType,
+                status: item.toDisplay,
+              });
+              return { ...item, index: count };
+            }
+          })
+          .filter((item) => item !== undefined);
+
+        count = 0;
+        this.inquiry = this.data
+          .map((item, index) => {
+            const date = moment(item.createdAt, 'YYYY-MM-DD');
+            if (
+              item.transactionType === 'inquiry' &&
+              item.toDisplay == 0 &&
+              date.isSame(currentDate, 'day')
+            ) {
+              count += 1;
+              return { ...item, index: count };
+            }
+          })
+          .filter((item) => item !== undefined);
+
+        console.log('EXECUTED from oninit ');
       },
       (error) => {
         console.error('Error fetching data:', error);

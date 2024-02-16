@@ -1,94 +1,7 @@
-.reset-container {
-  padding: 0;
-  margin: 0;
-}
-.main {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  position: fixed;
-}
-.container {
-  width: 90%;
-  height: 90%;
-  display: flex;
-  justify-content: space-between;
-}
-
-.left,
-.right {
-  width: 50%;
-  height: 100%;
-}
-.right {
-  display: flex;
-  flex-direction: column;
-  padding-top: 1em;
-}
-.logo {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-.logo-name {
-  text-align: center;
-}
-.logo-name h1 {
-  font-size: 2.5em;
-  margin: 0;
-}
-.logo-name p {
-  margin: 0;
-  font-size: 1.5em;
-}
-.logo img {
-  height: 6em;
-  width: 6em;
-}
-
-.video {
-  width: 100%;
-  padding-top: 2em;
-}
-.video video {
-  width: 100%;
-  height: 100%;
-  border-radius: 0.5em;
-}
-.left {
-  height: 80%;
-  box-sizing: border-box;
-  padding: 1em;
-  width: 45%;
-}
-
-.list {
-  padding-inline: 1em;
-}
-.list li {
-  display: flex;
-  justify-content: space-between;
-  font-size: 2em;
-  padding-inline: 1em;
-  padding-block: 0.5em;
-  margin-bottom: 0.5em;
-}
-.ongoing {
-  background-color: #0070c0;
-  color: white;
-  animation: blink 5s infinite;
-}
-.waiting {
-  background-color: #ffffff;
-  border: 1px solid black;
-  color: black;
-}
-@keyframes blink {
+@keyframes alert {
   0% {
     opacity: 0;
+    background-color: brown;
   }
   10% {
     opacity: 1;
@@ -107,52 +20,9 @@
   }
   100% {
     opacity: 1;
+    background-color: brown;
   }
 }
-
-.parent-scroll {
-  width: 100%;
-  background-color: #0070c0;
-  height: 10%;
-  position: relative;
-  bottom: 0;
-}
-.text {
-  font-size: 2em;
-}
-.scroll {
-  height: 100%;
-  background-color: #0070c0;
-  color: white;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  box-sizing: border-box;
-  padding-inline: 1em;
-  position: absolute;
-  bottom: 0;
-  top: 0;
-  left: -1;
-}
-.scroll p {
-  white-space: nowrap;
-  width: auto;
-  font-size: 3em;
-}
-.time {
-  background-color: #000000;
-  width: 6em;
-  height: 100%;
-  position: absolute;
-  right: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 3em;
-  color: white;
-  border: none;
-}
-
 @keyframes blinkTime {
   0% {
     opacity: 0;
@@ -161,15 +31,14 @@
     opacity: 1;
   }
 }
-.time p {
-  margin: 0;
+.alert {
+  animation: alert 3s linear infinite;
 }
 .blink {
   animation: blinkTime 0.5s linear infinite;
   color: white;
 }
 
-/* Move it (define the animation) */
 @keyframes scroll-left {
   0% {
     transform: translateX(100%);
@@ -181,28 +50,4 @@
 
 .scroll {
   animation: scroll-left 30s linear infinite;
-}
-
-.calendar {
-  width: 100%;
-  padding: 1em;
-  display: flex;
-  flex-direction: row;
-  gap: 1em;
-  background: black;
-  justify-content: center;
-  align-items: center;
-}
-.calendar .date {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 4em;
-  padding: 1em;
-  color: white;
-  box-sizing: border-box;
-}
-.date p {
-  font-size: 3em;
-  box-sizing: border-box;
 }
