@@ -26,7 +26,7 @@
 
 .alert {
   color: black;
-  animation: alertme 0.5s linear 2;
+  animation: alertme 0.5s linear 5;
 }
 
 @keyframes blinkTime {

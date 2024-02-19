@@ -67,6 +67,8 @@ export class QueueDisplayComponent implements OnInit {
     this.websocketService.getQueue().subscribe((response) => {
       let hasAlreadyPlayed = false;
       this.hasWaiting = false;
+      console.log(this.alertQueueId);
+      console.log(this.alertName);
 
       this.data = response.sort((a, b) => {
         const dataDate = moment(a.createdAt, 'YYYY-MM-DD');
