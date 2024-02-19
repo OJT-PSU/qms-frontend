@@ -16,6 +16,15 @@ export class QueueDisplayComponent implements OnInit {
   checkReleasing: any[] = [];
   inquiry: any[] = [];
 
+  selectedInquiry: any[] = [];
+  selectedCheckReleasing: any[] = [];
+  selectedPayment: any[] = [];
+
+  alertNow: boolean = false;
+  alertQueue: any = [];
+  alertName: string = '';
+  alertQueueId: string = '';
+
   fetchData: any[] = [];
   text: string = '';
   animation: string = '';
@@ -46,7 +55,13 @@ export class QueueDisplayComponent implements OnInit {
     }
 
     this.websocketService.queuePingEvent().subscribe((response) => {
-      console.log(response);
+      this.alertName = '';
+      this.alertQueueId = '';
+      this.alertName = '';
+      this.alertQueue = response;
+      this.alertName = this.alertQueue.name;
+      this.alertQueueId = this.alertQueue.QueueId;
+      this.sound.play();
     });
 
     this.websocketService.getQueue().subscribe((response) => {
@@ -70,41 +85,7 @@ export class QueueDisplayComponent implements OnInit {
           }
         }
       });
-      this.data.forEach((item) => {
-        if (item.queueStatus == 'ongoing' && !hasAlreadyPlayed) {
-          this.sound.play();
-          hasAlreadyPlayed = true;
-        }
-      });
-      let count = 0;
-      this.payment = this.data
-        .map((item, index) => {
-          if (item.transactionType === 'payment') {
-            count += 1;
-            return { ...item, index: index };
-          }
-        })
-        .filter((item) => item !== undefined);
-      count = 0;
-      this.checkReleasing = this.data
-        .map((item, index) => {
-          if (item.transactionType === 'checkReleasing') {
-            count += 1;
-            return { ...item, index: index };
-          }
-        })
-        .filter((item) => item !== undefined);
-      count = 0;
-      this.inquiry = this.data
-        .map((item, index) => {
-          if (item.transactionType === 'inquiry') {
-            count += 1;
-            return { ...item, index: index };
-          }
-        })
-        .filter((item) => item !== undefined);
-
-      console.log('EXECUTED from websocket ');
+      this.refresh();
     });
 
     this.websocketService.queueUpdateEvent().subscribe(() => {
@@ -120,12 +101,125 @@ export class QueueDisplayComponent implements OnInit {
     this.year = moment().format('YYYY');
   }
 
+  refresh(): void {
+    this.alertName = '';
+    this.alertQueueId = '';
+    this.alertName = '';
+    let hasAlreadyPlayed = false;
+    this.hasWaiting = false;
+    setInterval(() => {
+      const parentDiv = document.querySelector('.parentAlert');
+      if (parentDiv) {
+        const elementsToRemove = parentDiv.querySelectorAll('.alert');
+        elementsToRemove.forEach((element) =>
+          element.classList.remove('alert')
+        );
+      }
+      this.alertName = '';
+    }, 3000);
+    this.data.forEach((item) => {
+      if (item.queueStatus == 'ongoing' && !hasAlreadyPlayed) {
+        this.sound.play();
+        hasAlreadyPlayed = true;
+      }
+      if (
+        item.toDisplay === 0 &&
+        item.queueStatus != 'waiting' &&
+        item.transactionType === 'inquiry'
+      ) {
+        this.selectedInquiry = [{ name: item.name, queueId: item.queueId }];
+      }
+      if (
+        item.toDisplay === 0 &&
+        item.queueStatus != 'waiting' &&
+        item.transactionType === 'payment'
+      ) {
+        this.selectedPayment = [{ name: item.name, queueId: item.queueId }];
+      }
+      if (
+        item.toDisplay === 0 &&
+        item.queueStatus != 'waiting' &&
+        item.transactionType === 'checkReleasing'
+      ) {
+        this.selectedCheckReleasing = [
+          { name: item.name, queueId: item.queueId },
+        ];
+      }
+    });
+
+    const currentDate = moment().format('YYYY-MM-DD');
+    let count = 0;
+    this.payment = this.data
+      .map((item, index) => {
+        const date = moment(item.createdAt, 'YYYY-MM-DD');
+        if (
+          item.transactionType === 'payment' &&
+          date.isSame(currentDate, 'day')
+        ) {
+          count += 1;
+        }
+        if (
+          item.queueStatus === 'waiting' &&
+          item.transactionType === 'payment' &&
+          item.toDisplay == 0 &&
+          date.isSame(currentDate, 'day')
+        ) {
+          return { ...item, index: count };
+        }
+      })
+      .filter((item) => item !== undefined);
+
+    count = 0;
+    this.checkReleasing = this.data
+      .map((item, index) => {
+        const date = moment(item.createdAt, 'YYYY-MM-DD');
+        if (
+          item.transactionType === 'checkReleasing' &&
+          date.isSame(currentDate, 'day')
+        ) {
+          count += 1;
+        }
+        if (
+          item.queueStatus === 'waiting' &&
+          item.transactionType === 'checkReleasing' &&
+          item.toDisplay == 0 &&
+          date.isSame(currentDate, 'day')
+        ) {
+          console.log({
+            transaction: item.transactionType,
+            status: item.toDisplay,
+          });
+          return { ...item, index: count };
+        }
+      })
+      .filter((item) => item !== undefined);
+
+    count = 0;
+    this.inquiry = this.data
+      .map((item, index) => {
+        const date = moment(item.createdAt, 'YYYY-MM-DD');
+        if (
+          item.transactionType === 'inquiry' &&
+          date.isSame(currentDate, 'day')
+        ) {
+          count += 1;
+        }
+        if (
+          item.queueStatus === 'waiting' &&
+          item.transactionType === 'inquiry' &&
+          item.toDisplay == 0 &&
+          date.isSame(currentDate, 'day')
+        ) {
+          return { ...item, index: count };
+        }
+      })
+      .filter((item) => item !== undefined);
+
+    console.log('EXECUTED from oninit ');
+  }
   getData(): void {
     this.queueService.getQueueCustomer().subscribe(
       (response) => {
-        let hasAlreadyPlayed = false;
-        this.hasWaiting = false;
-
         this.data = response.sort((a, b) => {
           if (
             a.queueStatus == 'waiting' ||
@@ -139,65 +233,7 @@ export class QueueDisplayComponent implements OnInit {
             return a.queueId - b.queueId;
           }
         });
-        this.data.forEach((item) => {
-          if (item.queueStatus == 'ongoing' && !hasAlreadyPlayed) {
-            this.sound.play();
-            hasAlreadyPlayed = true;
-          }
-        });
-
-        const currentDate = moment().format('YYYY-MM-DD');
-        let count = 0;
-        this.payment = this.data
-          .map((item, index) => {
-            const date = moment(item.createdAt, 'YYYY-MM-DD');
-            if (
-              item.transactionType === 'payment' &&
-              item.toDisplay == 0 &&
-              date.isSame(currentDate, 'day')
-            ) {
-              count += 1;
-
-              return { ...item, index: count };
-            }
-          })
-          .filter((item) => item !== undefined);
-
-        count = 0;
-        this.checkReleasing = this.data
-          .map((item, index) => {
-            const date = moment(item.createdAt, 'YYYY-MM-DD');
-            if (
-              item.transactionType === 'checkReleasing' &&
-              item.toDisplay == 0 &&
-              date.isSame(currentDate, 'day')
-            ) {
-              count += 1;
-              console.log({
-                transaction: item.transactionType,
-                status: item.toDisplay,
-              });
-              return { ...item, index: count };
-            }
-          })
-          .filter((item) => item !== undefined);
-
-        count = 0;
-        this.inquiry = this.data
-          .map((item, index) => {
-            const date = moment(item.createdAt, 'YYYY-MM-DD');
-            if (
-              item.transactionType === 'inquiry' &&
-              item.toDisplay == 0 &&
-              date.isSame(currentDate, 'day')
-            ) {
-              count += 1;
-              return { ...item, index: count };
-            }
-          })
-          .filter((item) => item !== undefined);
-
-        console.log('EXECUTED from oninit ');
+        this.refresh();
       },
       (error) => {
         console.error('Error fetching data:', error);
