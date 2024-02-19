@@ -118,7 +118,7 @@ export class QueueDisplayComponent implements OnInit {
         );
       }
       this.alertName = '';
-    }, 3000);
+    }, 5000);
     this.data.forEach((item) => {
       if (item.queueStatus == 'ongoing' && !hasAlreadyPlayed) {
         this.sound.play();
