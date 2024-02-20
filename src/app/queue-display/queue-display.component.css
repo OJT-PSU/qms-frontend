@@ -26,7 +26,7 @@
 
 .alert {
   color: black;
-  animation: alertme 0.5s linear 5;
+  animation: alertme 1s linear 10;
 }
 
 @keyframes blinkTime {
@@ -37,7 +37,7 @@
     opacity: 1;
   }
 }
-.notAlert {
+.ongoing {
   background-color: #3b82f6;
   color: white;
 }
