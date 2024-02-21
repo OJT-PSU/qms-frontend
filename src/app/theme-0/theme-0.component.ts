@@ -117,7 +117,10 @@ export class Theme0Component implements OnInit {
         hasAlreadyPlayed = true;
       }
     });
-    this.display = this.data.slice(0, 9);
+    const filter = _.filter(this.data, (item) => {
+      return item.queueStatus === 'waiting' || item.queueStatus === 'ongoing';
+    });
+    this.display = _.slice(filter, 0, 7);
   }
   getData(): void {
     this.queueService.getQueueCustomer().subscribe(
