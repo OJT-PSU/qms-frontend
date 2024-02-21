@@ -7,8 +7,8 @@ import { Howl, Howler } from 'howler';
 @Component({
   selector: 'app-queue-display',
   standalone: true,
-  templateUrl: './queue-display.component.html',
-  styleUrls: ['./queue-display.component.css'],
+  templateUrl: './theme-0.component.html',
+  styleUrls: ['./theme-0.component.css'],
 })
 export class Theme0Component implements OnInit {
   data: any[] = [];
@@ -117,8 +117,7 @@ export class Theme0Component implements OnInit {
         hasAlreadyPlayed = true;
       }
     });
-    this.display = _.slice(this.data, 0, 7);
-    console.log('EXECUTED from oninit ');
+    this.display = this.data.slice(0, 9);
   }
   getData(): void {
     this.queueService.getQueueCustomer().subscribe(
@@ -137,7 +136,6 @@ export class Theme0Component implements OnInit {
           }
         });
         this.refresh();
-        console.log(this.data);
       },
       (error) => {
         console.error('Error fetching data:', error);

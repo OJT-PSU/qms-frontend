@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Theme0Component } from './queue-display.component';
+import { Theme0Component } from './theme-0.component';
 
 describe('QueueDisplayComponent', () => {
   let component: Theme0Component;
