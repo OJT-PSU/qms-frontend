@@ -1,16 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { QueueDisplayComponent } from './queue-display.component';
+import { Theme0Component } from './queue-display.component';
 
 describe('QueueDisplayComponent', () => {
-  let component: QueueDisplayComponent;
-  let fixture: ComponentFixture<QueueDisplayComponent>;
+  let component: Theme0Component;
+  let fixture: ComponentFixture<Theme0Component>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [QueueDisplayComponent],
+      imports: [Theme0Component],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(QueueDisplayComponent);
+    fixture = TestBed.createComponent(Theme0Component);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

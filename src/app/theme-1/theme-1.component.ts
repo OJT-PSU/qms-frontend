@@ -5,14 +5,20 @@ import moment from 'moment';
 import _ from 'lodash';
 import { Howl, Howler } from 'howler';
 @Component({
-  selector: 'app-queue-display',
+  selector: 'app-theme-1',
   standalone: true,
-  templateUrl: './queue-display.component.html',
-  styleUrls: ['./queue-display.component.css'],
+  templateUrl: './theme-1.component.html',
+  styleUrl: './theme-1.component.css',
 })
-export class QueueDisplayComponent implements OnInit {
+export class Theme1Component implements OnInit {
   data: any[] = [];
-  display: any[] = [];
+  payment: any[] = [];
+  checkReleasing: any[] = [];
+  inquiry: any[] = [];
+
+  selectedInquiry: any[] = [];
+  selectedCheckReleasing: any[] = [];
+  selectedPayment: any[] = [];
 
   alertNow: boolean = false;
   alertQueue: any = [];
@@ -59,6 +65,7 @@ export class QueueDisplayComponent implements OnInit {
     });
 
     this.websocketService.getQueue().subscribe((response) => {
+      let hasAlreadyPlayed = false;
       this.hasWaiting = false;
       console.log(this.alertQueueId);
       console.log(this.alertName);
@@ -99,8 +106,12 @@ export class QueueDisplayComponent implements OnInit {
   refresh(): void {
     this.alertName = '';
     this.alertQueueId = '';
+    this.alertName = '';
     let hasAlreadyPlayed = false;
     this.hasWaiting = false;
+    this.selectedPayment = [{ status: '' }];
+    this.selectedCheckReleasing = [{ status: '' }];
+    this.selectedInquiry = [{ status: '' }];
     setInterval(() => {
       const parentDiv = document.querySelector('.parentAlert');
       if (parentDiv) {
@@ -116,8 +127,103 @@ export class QueueDisplayComponent implements OnInit {
         this.sound.play();
         hasAlreadyPlayed = true;
       }
+      if (
+        item.toDisplay === 0 &&
+        item.queueStatus != 'waiting' &&
+        item.transactionType === 'inquiry'
+      ) {
+        this.selectedInquiry = [
+          { name: item.name, queueId: item.queueId, status: item.queueStatus },
+        ];
+      }
+      if (
+        item.toDisplay === 0 &&
+        item.queueStatus != 'waiting' &&
+        item.transactionType === 'payment'
+      ) {
+        this.selectedPayment = [
+          { name: item.name, queueId: item.queueId, status: item.queueStatus },
+        ];
+      }
+      if (
+        item.toDisplay === 0 &&
+        item.queueStatus != 'waiting' &&
+        item.transactionType === 'checkReleasing'
+      ) {
+        this.selectedCheckReleasing = [
+          { name: item.name, queueId: item.queueId, status: item.queueStatus },
+        ];
+      }
     });
-    this.display = _.slice(this.data, 0, 7);
+
+    const currentDate = moment().format('YYYY-MM-DD');
+    let count = 0;
+    this.payment = this.data
+      .map((item, index) => {
+        const date = moment(item.createdAt, 'YYYY-MM-DD');
+        if (
+          item.transactionType === 'payment' &&
+          date.isSame(currentDate, 'day')
+        ) {
+          count += 1;
+        }
+        if (
+          item.queueStatus === 'waiting' &&
+          item.transactionType === 'payment' &&
+          item.toDisplay == 0 &&
+          date.isSame(currentDate, 'day')
+        ) {
+          return { ...item, index: count };
+        }
+      })
+      .filter((item) => item !== undefined);
+
+    count = 0;
+    this.checkReleasing = this.data
+      .map((item, index) => {
+        const date = moment(item.createdAt, 'YYYY-MM-DD');
+        if (
+          item.transactionType === 'checkReleasing' &&
+          date.isSame(currentDate, 'day')
+        ) {
+          count += 1;
+        }
+        if (
+          item.queueStatus === 'waiting' &&
+          item.transactionType === 'checkReleasing' &&
+          item.toDisplay == 0 &&
+          date.isSame(currentDate, 'day')
+        ) {
+          console.log({
+            transaction: item.transactionType,
+            status: item.toDisplay,
+          });
+          return { ...item, index: count };
+        }
+      })
+      .filter((item) => item !== undefined);
+
+    count = 0;
+    this.inquiry = this.data
+      .map((item, index) => {
+        const date = moment(item.createdAt, 'YYYY-MM-DD');
+        if (
+          item.transactionType === 'inquiry' &&
+          date.isSame(currentDate, 'day')
+        ) {
+          count += 1;
+        }
+        if (
+          item.queueStatus === 'waiting' &&
+          item.transactionType === 'inquiry' &&
+          item.toDisplay == 0 &&
+          date.isSame(currentDate, 'day')
+        ) {
+          return { ...item, index: count };
+        }
+      })
+      .filter((item) => item !== undefined);
+
     console.log('EXECUTED from oninit ');
   }
   getData(): void {
@@ -137,7 +243,6 @@ export class QueueDisplayComponent implements OnInit {
           }
         });
         this.refresh();
-        console.log(this.data);
       },
       (error) => {
         console.error('Error fetching data:', error);
