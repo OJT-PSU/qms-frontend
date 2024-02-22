@@ -37,6 +37,19 @@ export class WebSocketService {
     return observable;
   }
 
+  themeUpdateEvent() {
+    let observable = new Observable<any[]>((observer) => {
+      this.socket.on('new-theme-update', () => {
+        console.log('hi');
+        observer.next();
+      });
+      return () => {
+        this.socket.disconnect();
+      };
+    });
+    return observable;
+  }
+
   queuePingEvent() {
     let observable = new Observable<any[]>((observer) => {
       this.socket.on('ping-event', (data: any) => {

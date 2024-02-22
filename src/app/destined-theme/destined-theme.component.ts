@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { QueueService } from '../queue.service';
-import { Route, Router } from '@angular/router';
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-destined-theme',
   standalone: true,

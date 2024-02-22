@@ -4,6 +4,8 @@ import { WebSocketService } from '../socket/web-socket.service';
 import moment from 'moment';
 import _ from 'lodash';
 import { Howl, Howler } from 'howler';
+import { Router } from '@angular/router';
+
 @Component({
   selector: 'app-theme-1',
   standalone: true,
@@ -43,7 +45,8 @@ export class Theme1Component implements OnInit {
   });
   constructor(
     private queueService: QueueService,
-    private websocketService: WebSocketService
+    private websocketService: WebSocketService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -53,6 +56,19 @@ export class Theme1Component implements OnInit {
     if (videoElement) {
       videoElement.volume = 0;
     }
+
+    this.websocketService.themeUpdateEvent().subscribe(() => {
+      this.queueService.checkThemeActive().subscribe({
+        next: (response) => {
+          const { themeType } = response;
+          console.log(themeType);
+          this.router.navigate([`/theme/`, `${themeType}`]);
+        },
+        error: (err) => {
+          console.log(err);
+        },
+      });
+    });
 
     this.websocketService.queuePingEvent().subscribe((response) => {
       this.alertName = '';
