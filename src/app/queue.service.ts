@@ -45,4 +45,11 @@ export class QueueService {
   checkThemeActive(): Observable<any> {
     return this.http.get<any>(`${URL}/display/theme`);
   }
+
+  updateThemeType(themeType: number, displayId: number = 1): Observable<any> {
+    return this.http.patch<any>(`${URL}/display/theme`, {
+      displayId,
+      themeType,
+    });
+  }
 }

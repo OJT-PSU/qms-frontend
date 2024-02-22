@@ -147,92 +147,143 @@
   </ng-template>
 </p-table>
 
-<p-dialog
-  [(visible)]="terminalDialog"
-  [style]="{ width: '450px', height: '600px' }"
-  header="Terminal Details"
-  [modal]="true"
-  styleClass="p-fluid"
->
-  <ng-template pTemplate="content">
-    <div class="field">
-      <label for="name">Terminal Name</label>
-      <input
-        type="text"
-        pInputText
-        id="name"
-        [(ngModel)]="terminal.terminalName"
-        required
-        autofocus
-      />
-      <small class="p-error" *ngIf="submitted && !terminal.terminalName"
-        >Name is required.</small
-      >
-    </div>
-    <div class="field">
-      <label for="description">Remarks</label>
-      <textarea
-        id="description"
-        pInputTextarea
-        [(ngModel)]="terminal.remarks"
-        required
-        rows="3"
-        cols="20"
-      ></textarea>
-    </div>
+<div class="field flex flex-row ml-2 mt-2 w-max">
+  <div class="flex flex-column gap-2">
+    <label for="theme">Theme</label>
+    <p
+      class="pl-4 pr-4 pt-2 pb-2 border-300 border-solid border-1 border-round-sm"
+      *ngIf="!editThemeType"
+    >
+      {{ themeUpdateValue }}
+    </p>
+    <p-dropdown
+      *ngIf="editThemeType"
+      [options]="themeOptions"
+      [(ngModel)]="themeUpdateValue"
+      optionLabel="label"
+      optionValue="value"
+      [placeholder]="themeUpdateValue.toString()"
+    ></p-dropdown>
+  </div>
+  <div
+    class="flex align-items-center justify-content-center gap-2 align-self-end"
+  >
+    <button
+      *ngIf="!editThemeType"
+      pButton
+      pRipple
+      type="button"
+      icon="pi pi-pencil"
+      (click)="editTheme()"
+      class="p-button-rounded p-button-text"
+    ></button>
+    <button
+      *ngIf="editThemeType"
+      pButton
+      pRipple
+      type="button"
+      icon="pi pi-check"
+      (click)="updateThemeType(themeUpdateValue)"
+      class="p-button-rounded p-button-text p-button-success mr-2"
+    ></button>
+    <button
+      *ngIf="editThemeType"
+      pButton
+      pRipple
+      type="button"
+      icon="pi pi-times"
+      (click)="disableEditTheme()"
+      class="p-button-rounded p-button-text p-button-danger"
+    ></button>
+  </div>
 
-    <div class="field">
-      <label>Transaction Type</label>
-      <p-dropdown
-        [options]="transactions"
-        [(ngModel)]="terminal.transactionType"
-        optionLabel="label"
-        optionValue="value"
-        placeholder="Select Transaction Type"
-      ></p-dropdown>
-    </div>
+  <p-dialog
+    [(visible)]="terminalDialog"
+    [style]="{ width: '450px', height: '600px' }"
+    header="Terminal Details"
+    [modal]="true"
+    styleClass="p-fluid"
+  >
+    <ng-template pTemplate="content">
+      <div class="field">
+        <label for="name">Terminal Name</label>
+        <input
+          type="text"
+          pInputText
+          id="name"
+          [(ngModel)]="terminal.terminalName"
+          required
+          autofocus
+        />
+        <small class="p-error" *ngIf="submitted && !terminal.terminalName"
+          >Name is required.</small
+        >
+      </div>
+      <div class="field">
+        <label for="description">Remarks</label>
+        <textarea
+          id="description"
+          pInputTextarea
+          [(ngModel)]="terminal.remarks"
+          required
+          rows="3"
+          cols="20"
+        ></textarea>
+      </div>
 
-    <div class="p-field">
-      <label class="p-mb-3">Status</label>
-      <div class="p-formgrid p-grid">
-        <div class="p-field-radiobutton p-col-6 mt-2">
-          <p-radioButton
-            id="status2"
-            name="status"
-            value="active"
-            [(ngModel)]="terminal.status"
-          ></p-radioButton>
-          <label for="status2" class="ml-2">Active</label>
-        </div>
-        <div class="p-field-radiobutton p-col-6 mt-2">
-          <p-radioButton
-            id="status2"
-            name="status"
-            value="inactive"
-            [(ngModel)]="terminal.status"
-          ></p-radioButton>
-          <label for="status2" class="ml-2">Inactive</label>
+      <div class="field">
+        <label>Transaction Type</label>
+        <p-dropdown
+          [options]="transactions"
+          [(ngModel)]="terminal.transactionType"
+          optionLabel="label"
+          optionValue="value"
+          placeholder="Select Transaction Type"
+        ></p-dropdown>
+      </div>
+
+      <div class="p-field">
+        <label class="p-mb-3">Status</label>
+        <div class="p-formgrid p-grid">
+          <div class="p-field-radiobutton p-col-6 mt-2">
+            <p-radioButton
+              id="status2"
+              name="status"
+              value="active"
+              [(ngModel)]="terminal.status"
+            ></p-radioButton>
+            <label for="status2" class="ml-2">Active</label>
+          </div>
+          <div class="p-field-radiobutton p-col-6 mt-2">
+            <p-radioButton
+              id="status2"
+              name="status"
+              value="inactive"
+              [(ngModel)]="terminal.status"
+            ></p-radioButton>
+            <label for="status2" class="ml-2">Inactive</label>
+          </div>
         </div>
       </div>
-    </div>
-  </ng-template>
+    </ng-template>
 
-  <ng-template pTemplate="footer">
-    <button
-      pButton
-      pRipple
-      label="Cancel"
-      icon="pi pi-times"
-      class="p-button-text"
-      (click)="hideDialog()"
-    ></button>
-    <button
-      pButton
-      pRipple
-      label="Save"
-      icon="pi pi-check"
-      class="p-button-text"
-      (click)="saveProduct()"
-    ></button>
-  </ng-template>
-</p-dialog>
+    <ng-template pTemplate="footer">
+      <button
+        pButton
+        pRipple
+        label="Cancel"
+        icon="pi pi-times"
+        class="p-button-text"
+        (click)="hideDialog()"
+      ></button>
+      <button
+        pButton
+        pRipple
+        label="Save"
+        icon="pi pi-check"
+        class="p-button-text"
+        (click)="saveProduct()"
+      ></button>
+    </ng-template>
+  </p-dialog>
+</div>

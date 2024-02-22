@@ -20,8 +20,13 @@ import { InputTextareaModule } from 'primeng/inputtextarea';
 import { HttpErrorResponse } from '@angular/common/http';
 import { catchError, throwError } from 'rxjs';
 import { TransactionType } from '../interfaces/queueCustomer';
+import { config } from 'node:process';
+import { response } from 'express';
+import { error } from 'node:console';
 
 type AdminStatus = 'active' | 'inactive';
+
+type ThemeType = 1 | 2 | 0;
 
 interface Terminal {
   terminalName: string;
@@ -40,6 +45,11 @@ interface TerminalDialog {
   transactionType?: TransactionType;
   isEditing?: boolean;
 }
+
+type DropdownOptionsType<T> = Array<{
+  label: string;
+  value: T;
+}>;
 
 @Component({
   selector: 'app-queue-terminal',
@@ -73,15 +83,24 @@ export class QueueTerminalComponent {
   submitted: boolean = false;
   terminal: TerminalDialog = {};
 
-  newStatuses: any[] = [
+  themeUpdateValue: ThemeType = 0;
+  editThemeType: boolean = false;
+
+  newStatuses: DropdownOptionsType<AdminStatus> = [
     { label: 'Active', value: 'active' },
     { label: 'Inactive', value: 'inactive' },
   ];
 
-  transactions: Array<{ label: string; value: TransactionType }> = [
+  transactions: DropdownOptionsType<TransactionType> = [
     { label: 'Payment', value: 'payment' },
     { label: 'Check Releasing', value: 'checkReleasing' },
     { label: 'Inquiry', value: 'inquiry' },
+  ];
+
+  themeOptions: DropdownOptionsType<ThemeType> = [
+    { label: '0', value: 0 },
+    { label: '1', value: 1 },
+    { label: '2', value: 2 },
   ];
 
   constructor(
@@ -93,6 +112,36 @@ export class QueueTerminalComponent {
 
   ngOnInit(): void {
     this.getTerminal();
+
+    this.queueService.checkThemeActive().subscribe({
+      next: (response) => {
+        const { themeType } = response;
+        this.themeUpdateValue = themeType;
+        console.log(themeType);
+      },
+      error: (err) => {
+        console.log(err);
+        this.showError(err);
+      },
+    });
+  }
+
+  updateThemeType(value: ThemeType) {
+    this.queueService.updateThemeType(value).subscribe({
+      error: (error) => {
+        this.showError(error);
+      },
+    });
+
+    this.disableEditTheme();
+  }
+
+  editTheme() {
+    this.editThemeType = true;
+  }
+
+  disableEditTheme() {
+    this.editThemeType = false;
   }
 
   getValueByLabel(value: TransactionType) {
@@ -101,7 +150,7 @@ export class QueueTerminalComponent {
   }
 
   getStatusByValue(value: AdminStatus) {
-    const status = this.newStatuses.find((s) => s.value === value);
+    const status = this.newStatuses.find((s) => s.value === value)!;
     return status.label;
   }
 
