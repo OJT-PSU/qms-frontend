@@ -5,22 +5,18 @@ import moment from 'moment';
 import _ from 'lodash';
 import { Howl, Howler } from 'howler';
 @Component({
-  selector: 'app-theme-1',
+  selector: 'app-theme-2',
   standalone: true,
-  templateUrl: './theme-1.component.html',
-  styleUrl: './theme-1.component.css',
+  imports: [],
+  templateUrl: './theme-2.component.html',
+  styleUrl: './theme-2.component.css',
 })
-export class Theme1Component implements OnInit {
+export class Theme2Component implements OnInit {
   data: any[] = [];
   payment: any[] = [];
   checkReleasing: any[] = [];
   inquiry: any[] = [];
 
-  selectedInquiry: any[] = [];
-  selectedCheckReleasing: any[] = [];
-  selectedPayment: any[] = [];
-
-  alertNow: boolean = false;
   alertQueue: any = [];
   alertName: string = '';
   alertQueueId: string = '';
@@ -57,7 +53,6 @@ export class Theme1Component implements OnInit {
     this.websocketService.queuePingEvent().subscribe((response) => {
       this.alertName = '';
       this.alertQueueId = '';
-      this.alertName = '';
       this.alertQueue = response;
       this.alertName = this.alertQueue.name;
       this.alertQueueId = this.alertQueue.queueId;
@@ -70,9 +65,6 @@ export class Theme1Component implements OnInit {
     this.websocketService.getQueue().subscribe((response) => {
       let hasAlreadyPlayed = false;
       this.hasWaiting = false;
-      console.log(this.alertQueueId);
-      console.log(this.alertName);
-
       this.data = response.sort((a, b) => {
         if (
           a.queueStatus == 'waiting' ||
@@ -107,9 +99,7 @@ export class Theme1Component implements OnInit {
     this.alertQueueId = '';
     let hasAlreadyPlayed = false;
     this.hasWaiting = false;
-    this.selectedPayment = [{ status: '' }];
-    this.selectedCheckReleasing = [{ status: '' }];
-    this.selectedInquiry = [{ status: '' }];
+
     setInterval(() => {
       const parentDiv = document.querySelector('.parentAlert');
       if (parentDiv) {
@@ -125,33 +115,6 @@ export class Theme1Component implements OnInit {
         this.sound.play();
         hasAlreadyPlayed = true;
       }
-      if (
-        item.toDisplay === 0 &&
-        item.queueStatus != 'waiting' &&
-        item.transactionType === 'inquiry'
-      ) {
-        this.selectedInquiry = [
-          { name: item.name, queueId: item.queueId, status: item.queueStatus },
-        ];
-      }
-      if (
-        item.toDisplay === 0 &&
-        item.queueStatus != 'waiting' &&
-        item.transactionType === 'payment'
-      ) {
-        this.selectedPayment = [
-          { name: item.name, queueId: item.queueId, status: item.queueStatus },
-        ];
-      }
-      if (
-        item.toDisplay === 0 &&
-        item.queueStatus != 'waiting' &&
-        item.transactionType === 'checkReleasing'
-      ) {
-        this.selectedCheckReleasing = [
-          { name: item.name, queueId: item.queueId, status: item.queueStatus },
-        ];
-      }
     });
 
     const currentDate = moment();
@@ -163,7 +126,17 @@ export class Theme1Component implements OnInit {
         currentDate.isSame(dateItem, 'year')
       );
     });
-    console.log('EXECUTED from oninit ');
+    this.payment = _.filter(this.data, (o) => {
+      return o.queueStatus != 'accommodated' && o.transactionType == 'payment';
+    });
+    this.checkReleasing = _.filter(this.data, (o) => {
+      return (
+        o.queueStatus != 'accommodated' && o.transactionType == 'checkReleasing'
+      );
+    });
+    this.inquiry = _.filter(this.data, (o) => {
+      return o.queueStatus != 'accommodated' && o.transactionType == 'inquiry';
+    });
   }
   getData(): void {
     this.queueService.getQueueCustomer().subscribe(
@@ -192,7 +165,6 @@ export class Theme1Component implements OnInit {
   getConfig(): void {
     this.queueService.getConfig().subscribe(
       (response) => {
-        console.log(response);
         const { dispMsg, scrollTime, video } = response[0];
         this.videoUrl = '../../assets/' + video;
         this.animation = scrollTime;

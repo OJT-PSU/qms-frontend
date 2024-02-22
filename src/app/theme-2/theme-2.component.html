@@ -2,11 +2,11 @@
   <div class="w-12 flex flex-row h-full">
     <div class="w-7 flex flex-column gap-2">
       <!-- Now Serving Title -->
-      <div
+      <!-- <div
         class="flex flex-row justify-content-center align-items-center border-1 bg-gray-900 text-white"
       >
         <p>Now Serving</p>
-      </div>
+      </div> -->
       <!-- Column Header -->
       <div class="flex flex-row gap-5">
         <div
@@ -26,98 +26,59 @@
         </div>
       </div>
       <!-- Current Serving -->
-      <div class="flex flex-row gap-5 parentAlert">
-        <div
-          class="w-4 border-1 flex flex-row px-5 justify-content-between align-items-center h-5rem text-6xl font-bold text-white"
-          [class.alert]="alertName === selectedPayment[0]?.name"
-          [class.notAlert]="
-            alertName !== selectedPayment[0]?.name ||
-            alertQueueId !== selectedPayment[0]?.queueId
-          "
-        >
-          @if(selectedPayment[0]?.status =="ongoing"){
-          <p>{{ selectedPayment[0]?.name }}</p>
-          }
-        </div>
 
-        <!-- Check Releasing -->
-        <div
-          [class.notAlert]="
-            alertName !== selectedCheckReleasing[0]?.name ||
-            alertQueueId !== selectedCheckReleasing[0]?.queueId
-          "
-          [class.alert]="selectedCheckReleasing[0]?.name === alertName"
-          class="w-4 border-1 flex flex-row px-5 justify-content-between align-items-center h-5rem text-6xl font-bold text-white"
-        >
-          @if(selectedCheckReleasing[0]?.status =="ongoing"){
-          <p>{{ selectedCheckReleasing[0]?.name }}</p>
-          }
-        </div>
-
-        <!-- Inquiry -->
-        <div
-          class="w-4 border-1 flex flex-row px-5 justify-content-between align-items-center h-5rem text-6xl font-bold text-white"
-          [class.alert]="alertName === selectedInquiry[0]?.name"
-          [class.notAlert]="
-            alertName !== selectedInquiry[0]?.name ||
-            alertQueueId !== selectedInquiry[0]?.queueId
-          "
-        >
-          @if(selectedInquiry[0]?.status =="ongoing"){
-          <p>{{ selectedInquiry[0]?.name }}</p>
-          }
-        </div>
-      </div>
       <!-- Waiting -->
-      <div
-        class="flex flex-row justify-content-center align-items-center border-1 bg-gray-900 text-white"
-      >
-        <p>Waiting</p>
-      </div>
+
       <!-- All List -->
       <div
-        class="parentAlert flex flex-row w-12 gap-4 justify-content-center align-items-start"
+        class="parentAlert flex flex-row w-12 gap-5 justify-content-center align-items-start"
       >
         <!-- Payment List -->
         <div class="flex flex-column w-4 gap-2">
-          @for (payment of data; track payment.queueId){
-          @if(payment.transactionType=="payment" &&
-          payment.queueStatus=="waiting"){
+          @for (payment of payment; track payment.queueId){
           <div
-            class="border-1 flex flex-row px-5 justify-content-between align-items-center h-5rem text-6xl font-bold"
+            [class]="payment.queueStatus + ' ' + payment.name + payment.queueId"
+            class="border-1 flex flex-row px-5 justify-content-between align-items-center h-5rem text-4xl font-bold"
           >
-            <p>{{ payment.name }}</p>
-            <p>{{ payment.index }}</p>
+            <p>{{ payment.name.toUpperCase() }}</p>
+            @if(payment.terminal != null){
+            <p>{{ "W" + payment.terminal }}</p>
+            }
           </div>
-          } }
+          }
         </div>
         <!-- Check Releasing -->
         <div class="flex flex-column w-4 gap-2">
-          @for (checkReleasing of data; track checkReleasing.queueId){
-          @if(checkReleasing.transactionType=="checkReleasing" &&
-          checkReleasing.queueStatus=="waiting"){
-
+          @for (checkReleasing of checkReleasing; track checkReleasing.queueId){
           <div
-            class="border-1 flex flex-row px-5 justify-content-between align-items-center h-5rem text-6xl font-bold"
+            [class]="
+              checkReleasing.queueStatus +
+              ' ' +
+              checkReleasing.name +
+              checkReleasing.queueId
+            "
+            class="border-1 flex flex-row px-5 justify-content-between align-items-center h-5rem text-4xl font-bold"
           >
-            <p>{{ checkReleasing.name }}</p>
-            <p>{{ checkReleasing.index }}</p>
+            <p>{{ checkReleasing.name.toUpperCase() }}</p>
+            @if(checkReleasing.terminal != null){
+            <p>{{ "W" + checkReleasing.terminal }}</p>
+            }
           </div>
-          }}
+          }
         </div>
         <!-- Inquiry -->
         <div class="flex flex-column w-4 gap-2">
-          @for (inquiry of data; track inquiry.queueId){
-          @if(inquiry.transactionType=="inquiry" &&
-          inquiry.queueStatus=="waiting"){
-
+          @for (inquiry of inquiry; track inquiry.queueId){
           <div
-            class="border-1 flex flex-row px-5 justify-content-between align-items-center h-5rem text-6xl font-bold"
+            [class]="inquiry.queueStatus + ' ' + inquiry.name + inquiry.queueId"
+            class="border-1 flex flex-row px-5 justify-content-between align-items-center h-5rem text-4xl font-bold"
           >
-            <p>{{ inquiry.name }}</p>
-            <p>{{ inquiry.index }}</p>
+            <p>{{ inquiry.name.toUpperCase() }}</p>
+            @if(inquiry.terminal != null){
+            <p>{{ "W" + inquiry.terminal }}</p>
+            }
           </div>
-          }}
+          }
         </div>
       </div>
     </div>

@@ -54,7 +54,10 @@ export class Theme0Component implements OnInit {
       this.alertName = '';
       this.alertQueue = response;
       this.alertName = this.alertQueue.name;
-      this.alertQueueId = this.alertQueue.QueueId;
+      this.alertQueueId = this.alertQueue.queueId;
+      const alertNow = this.alertName + '' + this.alertQueueId;
+      const putAlert = document.querySelector(`.${alertNow}`);
+      putAlert?.classList.add('alert');
       this.sound.play();
     });
 
@@ -64,20 +67,16 @@ export class Theme0Component implements OnInit {
       console.log(this.alertName);
 
       this.data = response.sort((a, b) => {
-        const dataDate = moment(a.createdAt, 'YYYY-MM-DD');
-        const isSameDate = dataDate.isSame(dataDate);
-        if (isSameDate) {
-          if (
-            a.queueStatus == 'waiting' ||
-            (a.queueStatus == 'ongoing' && a.toDisplay === 0)
-          ) {
-            this.hasWaiting = true;
-          }
-          if (a.queueStatus !== b.queueStatus) {
-            return a.queueStatus.localeCompare(b.queueStatus);
-          } else {
-            return a.queueId - b.queueId;
-          }
+        if (
+          a.queueStatus == 'waiting' ||
+          (a.queueStatus == 'ongoing' && a.toDisplay === 0)
+        ) {
+          this.hasWaiting = true;
+        }
+        if (a.queueStatus !== b.queueStatus) {
+          return a.queueStatus.localeCompare(b.queueStatus);
+        } else {
+          return a.queueId - b.queueId;
         }
       });
       this.refresh();
@@ -117,6 +116,17 @@ export class Theme0Component implements OnInit {
         hasAlreadyPlayed = true;
       }
     });
+
+    const currentDate = moment();
+    this.data = _.filter(this.data, (o) => {
+      const dateItem = moment(o.createdAt);
+      return (
+        currentDate.isSame(dateItem, 'day') &&
+        currentDate.isSame(dateItem, 'month') &&
+        currentDate.isSame(dateItem, 'year')
+      );
+    });
+
     const filter = _.filter(this.data, (item) => {
       return item.queueStatus === 'waiting' || item.queueStatus === 'ongoing';
     });

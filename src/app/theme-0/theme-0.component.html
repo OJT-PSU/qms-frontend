@@ -24,34 +24,35 @@
               Name
             </p>
           </div>
-          @for (mydata of display; track mydata.queueId){ @if(mydata.queueStatus
-          !=="accommodated" && mydata.toDisplay !== 1){
-          <div
-            class="border-1 flex flex-row justify-content-between align-items-center px-2 h-5rem text-6xl font-bold"
-            [class.alert]="alertName === mydata.name"
-            [class.ongoing]="mydata.queueStatus != 'waiting'"
-          >
-            <div class="w-2 flex flex-row text-left justify-content-center">
-              {{ mydata.terminal }}
-            </div>
+          <div class="parentAlert">
+            @for (mydata of display; track mydata.queueId){
+            @if(mydata.queueStatus !=="accommodated" && mydata.toDisplay !== 1){
             <div
-              class="w-2 flex flex-row justify-content-center align-items-center"
+              class="border-1 flex flex-row justify-content-between align-items-center px-2 h-5rem text-6xl font-bold"
+              [class]="mydata.queueStatus + ' ' + mydata.name + mydata.queueId"
             >
-              @if(mydata.transactionType=="payment"){
-              {{ "PAY" }}
-              }@else if(mydata.transactionType=="inquiry"){
-              {{ "INQ" }}
-              }@else{
-              {{ "CHK" }}
-              }
+              <div class="w-2 flex flex-row text-left justify-content-center">
+                {{ mydata.terminal }}
+              </div>
+              <div
+                class="w-2 flex flex-row justify-content-center align-items-center"
+              >
+                @if(mydata.transactionType=="payment"){
+                {{ "PAY" }}
+                }@else if(mydata.transactionType=="inquiry"){
+                {{ "INQ" }}
+                }@else{
+                {{ "CHK" }}
+                }
+              </div>
+              <div
+                class="w-8 flex flex-row justify-content-center align-items-center"
+              >
+                {{ mydata.name.toUpperCase() }}
+              </div>
             </div>
-            <div
-              class="w-8 flex flex-row justify-content-center align-items-center"
-            >
-              {{ mydata.name.toUpperCase() }}
-            </div>
+            } }
           </div>
-          } }
         </div>
       </div>
     </div>
