@@ -1,0 +1,60 @@
+@keyframes alertme {
+  0% {
+    opacity: 0;
+    background-color: #2fb151;
+  }
+  10% {
+    opacity: 1;
+  }
+  20% {
+    opacity: 0;
+  }
+  30% {
+    opacity: 1;
+  }
+  40% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+    background-color: #2fb151;
+  }
+}
+
+.alert {
+  color: black;
+  animation: alertme 1s linear 10;
+}
+
+@keyframes blinkTime {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+.ongoing {
+  background-color: #3b82f6;
+  color: white;
+}
+.blink {
+  animation: blinkTime 0.5s linear infinite;
+  color: white;
+}
+
+@keyframes scroll-left {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+.scroll {
+  animation: scroll-left 30s linear infinite;
+}

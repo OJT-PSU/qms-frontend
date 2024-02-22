@@ -41,4 +41,8 @@ export class QueueService {
   updateToDisplayList(): Observable<any[]> {
     return this.http.patch<any>(`${URL}/queue/reset-queue`, {});
   }
+
+  checkThemeActive(): Observable<any> {
+    return this.http.get<any>(`${URL}/display/theme`);
+  }
 }

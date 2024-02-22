@@ -41,7 +41,6 @@ export class WebSocketService {
     let observable = new Observable<any[]>((observer) => {
       this.socket.on('ping-event', (data: any) => {
         observer.next(data);
-        console.log(data);
       });
       return () => {
         this.socket.disconnect();

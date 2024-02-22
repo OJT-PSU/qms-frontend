@@ -1,0 +1,132 @@
+<div class="flex flex-column h-screen w-full">
+  <div class="w-12 flex flex-row h-full">
+    <div class="w-7 flex flex-column gap-2">
+      <!-- Now Serving Title -->
+      <!-- <div
+        class="flex flex-row justify-content-center align-items-center border-1 bg-gray-900 text-white"
+      >
+        <p>Now Serving</p>
+      </div> -->
+      <!-- Column Header -->
+      <div class="flex flex-row gap-5">
+        <div
+          class="w-4 border-1 flex flex-row px-5 justify-content-center align-items-center h-2rem bg-gray-900 text-white"
+        >
+          <p>PAYMENT</p>
+        </div>
+        <div
+          class="w-4 border-1 flex flex-row px-5 justify-content-center align-items-center h-2rem bg-gray-900 text-white"
+        >
+          <p>CHECK RELEASING</p>
+        </div>
+        <div
+          class="w-4 border-1 flex flex-row px-5 justify-content-center align-items-center h-2rem bg-gray-900 text-white"
+        >
+          <p>INQUIRY</p>
+        </div>
+      </div>
+      <!-- Current Serving -->
+
+      <!-- Waiting -->
+
+      <!-- All List -->
+      <div
+        class="parentAlert flex flex-row w-12 gap-5 justify-content-center align-items-start"
+      >
+        <!-- Payment List -->
+        <div class="flex flex-column w-4 gap-2">
+          @for (payment of payment; track payment.queueId){
+          <div
+            [class]="payment.queueStatus + ' ' + payment.name + payment.queueId"
+            class="border-1 flex flex-row px-5 justify-content-between align-items-center h-5rem text-4xl font-bold"
+          >
+            <p>{{ payment.name.toUpperCase() }}</p>
+            @if(payment.terminal != null){
+            <p>{{ "W" + payment.terminal }}</p>
+            }
+          </div>
+          }
+        </div>
+        <!-- Check Releasing -->
+        <div class="flex flex-column w-4 gap-2">
+          @for (checkReleasing of checkReleasing; track checkReleasing.queueId){
+          <div
+            [class]="
+              checkReleasing.queueStatus +
+              ' ' +
+              checkReleasing.name +
+              checkReleasing.queueId
+            "
+            class="border-1 flex flex-row px-5 justify-content-between align-items-center h-5rem text-4xl font-bold"
+          >
+            <p>{{ checkReleasing.name.toUpperCase() }}</p>
+            @if(checkReleasing.terminal != null){
+            <p>{{ "W" + checkReleasing.terminal }}</p>
+            }
+          </div>
+          }
+        </div>
+        <!-- Inquiry -->
+        <div class="flex flex-column w-4 gap-2">
+          @for (inquiry of inquiry; track inquiry.queueId){
+          <div
+            [class]="inquiry.queueStatus + ' ' + inquiry.name + inquiry.queueId"
+            class="border-1 flex flex-row px-5 justify-content-between align-items-center h-5rem text-4xl font-bold"
+          >
+            <p>{{ inquiry.name.toUpperCase() }}</p>
+            @if(inquiry.terminal != null){
+            <p>{{ "W" + inquiry.terminal }}</p>
+            }
+          </div>
+          }
+        </div>
+      </div>
+    </div>
+    <div class="w-5">
+      <!-- Logo Header -->
+      <div
+        class="flex flex-row h-6rem justify-content-evenly align-items-center"
+      >
+        <img class="h-5rem w-5rem" src="../../assets/tms.png" alt="" />
+        <div class="flex flex-column justify-content-center align-items-center">
+          <h1 class="text-2xl m-0">Queuing Management System</h1>
+          <p class="m-0">Treasury Management System</p>
+        </div>
+        <img class="h-5rem w-5rem" src="../../assets/capitol.png" alt="" />
+      </div>
+      <div class="flex w-full px-5 flex-column align-items-center">
+        <video
+          class="w-full"
+          src="../../assets/sample_video.mp4"
+          autoplay
+          muted
+          loop
+        ></video>
+        <div
+          class="flex flex-row justify-content-center gap-4 align-items-center bg-gray-900 text-white w-full px-5 text-4xl font-bold"
+        >
+          <p>{{ month }}</p>
+          <p>{{ day }}</p>
+          <p>{{ year }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="relative w-12 overflow-hidden h-5rem bg-blue-500 flex flex-row justify-content-start align-items-center"
+  >
+    <div
+      class="w-full scroll absolute h-full text-2xl text-white flex flex-row justify-content-start align-items-center"
+      [style.animation-duration]="animation"
+    >
+      <p class="m-0 white-space-nowrap w-auto">{{ text }}</p>
+    </div>
+    <div
+      class="bg-gray-900 flex flex-row absolute text-white h-full justify-content-center align-items-center text-2xl px-5 right-0"
+    >
+      <p class="m-0">
+        {{ getHour }} <span class="blink">:</span> {{ getMins }} {{ amPm }}
+      </p>
+    </div>
+  </div>
+</div>
