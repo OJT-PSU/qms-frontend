@@ -39,9 +39,8 @@ export class WebSocketService {
 
   themeUpdateEvent() {
     let observable = new Observable<any[]>((observer) => {
-      this.socket.on('new-theme-update', () => {
-        console.log('hi');
-        observer.next();
+      this.socket.on('new-theme-update', (response: any) => {
+        observer.next(response);
       });
       return () => {
         this.socket.disconnect();

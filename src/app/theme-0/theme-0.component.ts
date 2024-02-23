@@ -51,17 +51,10 @@ export class Theme0Component implements OnInit {
       videoElement.volume = 0;
     }
 
-    this.websocketService.themeUpdateEvent().subscribe(() => {
-      this.queueService.checkThemeActive().subscribe({
-        next: (response) => {
-          const { themeType } = response;
-          console.log({ themeType });
-          this.router.navigate([`/theme/`, `${themeType}`]);
-        },
-        error: (err) => {
-          console.log(err);
-        },
-      });
+    this.websocketService.themeUpdateEvent().subscribe((config: any) => {
+      const { themeType } = config;
+      this.router.navigate([`/theme/`, `${themeType}`]);
+      console.log(themeType);
     });
 
     this.websocketService.queuePingEvent().subscribe((response) => {
