@@ -9,19 +9,20 @@
             class="text-white bg-gray-900 py-2 px-2 flex flex-row justify-content-between align-items-center"
           >
             <p
-              class="text-2xl m-0 flex flex-row justify-content-center align-items-center w-2"
+              class="text-2xl m-0 flex flex-row justify-content-center align-items-center w-8"
             >
-              Window
+              Name
             </p>
             <p
               class="text-2xl m-0 flex flex-row justify-content-center align-items-center w-2"
             >
               Transaction
             </p>
+
             <p
-              class="text-2xl m-0 flex flex-row justify-content-center align-items-center w-8"
+              class="text-2xl m-0 flex flex-row justify-content-center align-items-center w-2"
             >
-              Name
+              Window
             </p>
           </div>
           <div class="parentAlert">
@@ -31,8 +32,10 @@
               class="border-1 flex flex-row justify-content-between align-items-center px-2 h-5rem text-6xl font-bold"
               [class]="mydata.queueStatus + ' ' + mydata.name + mydata.queueId"
             >
-              <div class="w-2 flex flex-row text-left justify-content-center">
-                {{ mydata.terminal }}
+              <div
+                class="w-8 flex flex-row justify-content-center align-items-center"
+              >
+                {{ mydata.name.toUpperCase() }}
               </div>
               <div
                 class="w-2 flex flex-row justify-content-center align-items-center"
@@ -45,10 +48,9 @@
                 {{ "CHK" }}
                 }
               </div>
-              <div
-                class="w-8 flex flex-row justify-content-center align-items-center"
-              >
-                {{ mydata.name.toUpperCase() }}
+
+              <div class="w-2 flex flex-row text-left justify-content-center">
+                {{ mydata.terminal }}
               </div>
             </div>
             } }
