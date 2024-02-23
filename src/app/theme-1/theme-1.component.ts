@@ -76,12 +76,7 @@ export class Theme1Component implements OnInit {
       this.sound.play();
     });
 
-    this.websocketService.getQueue().subscribe((response) => {
-      let hasAlreadyPlayed = false;
-      this.hasWaiting = false;
-      console.log(this.alertQueueId);
-      console.log(this.alertName);
-
+    this.websocketService.queueUpdateEvent().subscribe((response) => {
       this.data = response.sort((a, b) => {
         if (
           a.queueStatus == 'waiting' ||
@@ -96,10 +91,6 @@ export class Theme1Component implements OnInit {
         }
       });
       this.refresh();
-    });
-
-    this.websocketService.queueUpdateEvent().subscribe(() => {
-      this.websocketService.sendQueueRequest();
     });
     setInterval(() => {
       this.amPm = moment().format('A');

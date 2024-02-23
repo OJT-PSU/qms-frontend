@@ -90,9 +90,23 @@ export class Theme2Component implements OnInit {
       this.refresh();
     });
 
-    this.websocketService.queueUpdateEvent().subscribe(() => {
-      this.websocketService.sendQueueRequest();
+    this.websocketService.queueUpdateEvent().subscribe((response) => {
+      this.data = response.sort((a, b) => {
+        if (
+          a.queueStatus == 'waiting' ||
+          (a.queueStatus == 'ongoing' && a.toDisplay === 0)
+        ) {
+          this.hasWaiting = true;
+        }
+        if (a.queueStatus !== b.queueStatus) {
+          return a.queueStatus.localeCompare(b.queueStatus);
+        } else {
+          return a.queueId - b.queueId;
+        }
+      });
+      this.refresh();
     });
+
     setInterval(() => {
       this.amPm = moment().format('A');
       this.getHour = moment().format('h');

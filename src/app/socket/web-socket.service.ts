@@ -27,8 +27,8 @@ export class WebSocketService {
 
   queueUpdateEvent() {
     let observable = new Observable<any[]>((observer) => {
-      this.socket.on('new-queue-update', () => {
-        observer.next();
+      this.socket.on('new-queue-update', (response: any) => {
+        observer.next(response);
       });
       return () => {
         this.socket.disconnect();

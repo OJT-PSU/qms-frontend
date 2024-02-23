@@ -57,24 +57,7 @@ export class Theme0Component implements OnInit {
       console.log(themeType);
     });
 
-    this.websocketService.queuePingEvent().subscribe((response) => {
-      this.alertName = '';
-      this.alertQueueId = '';
-      this.alertName = '';
-      this.alertQueue = response;
-      this.alertName = this.alertQueue.name;
-      this.alertQueueId = this.alertQueue.queueId;
-      const alertNow = this.alertName + '' + this.alertQueueId;
-      const putAlert = document.querySelector(`.${alertNow}`);
-      putAlert?.classList.add('alert');
-      this.sound.play();
-    });
-
-    this.websocketService.getQueue().subscribe((response) => {
-      this.hasWaiting = false;
-      console.log(this.alertQueueId);
-      console.log(this.alertName);
-
+    this.websocketService.queueUpdateEvent().subscribe((response) => {
       this.data = response.sort((a, b) => {
         if (
           a.queueStatus == 'waiting' ||
@@ -91,9 +74,6 @@ export class Theme0Component implements OnInit {
       this.refresh();
     });
 
-    this.websocketService.queueUpdateEvent().subscribe(() => {
-      this.websocketService.sendQueueRequest();
-    });
     setInterval(() => {
       this.amPm = moment().format('A');
       this.getHour = moment().format('h');
