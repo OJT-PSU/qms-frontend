@@ -146,7 +146,8 @@ export class Theme2Component implements OnInit {
       return (
         currentDate.isSame(dateItem, 'day') &&
         currentDate.isSame(dateItem, 'month') &&
-        currentDate.isSame(dateItem, 'year')
+        currentDate.isSame(dateItem, 'year') &&
+        o.toDisplay == 0
       );
     });
     this.payment = _.filter(this.data, (o) => {
