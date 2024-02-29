@@ -39,6 +39,8 @@ export class Theme2Component implements OnInit {
     src: ['../../assets/sound.mp3'],
     html5: true,
   });
+  last_id: any = null;
+
   constructor(
     private queueService: QueueService,
     private websocketService: WebSocketService,
@@ -48,10 +50,6 @@ export class Theme2Component implements OnInit {
   ngOnInit(): void {
     this.getData();
     this.getConfig();
-    const videoElement = document.querySelector('video');
-    if (videoElement) {
-      videoElement.volume = 0;
-    }
 
     this.websocketService.themeUpdateEvent().subscribe((config: any) => {
       const { themeType } = config;
@@ -59,16 +57,20 @@ export class Theme2Component implements OnInit {
       console.log(themeType);
     });
 
-    this.websocketService.queuePingEvent().subscribe((response) => {
-      this.alertName = '';
-      this.alertQueueId = '';
-      this.alertQueue = response;
-      this.alertName = this.alertQueue.name;
-      this.alertQueueId = this.alertQueue.queueId;
-      const alertNow = this.alertName + '' + this.alertQueueId;
-      const putAlert = document.querySelector(`.${alertNow}`);
-      putAlert?.classList.add('alert');
+    this.websocketService.queuePingEvent().subscribe((response: any) => {
       this.sound.play();
+      const elementToAlert = document.getElementById(response.queueId);
+      elementToAlert?.classList.add('alert');
+      elementToAlert?.classList.remove('notAlert');
+
+      if (this.last_id !== null) {
+        clearTimeout(this.last_id);
+      }
+
+      this.last_id = setTimeout(() => {
+        elementToAlert?.classList.add('notAlert');
+        elementToAlert?.classList.remove('alert');
+      }, 5000);
     });
 
     this.websocketService.getQueue().subscribe((response) => {

@@ -31,6 +31,7 @@
             <div
               class="border-1 flex flex-row justify-content-between align-items-center px-2 h-5rem text-6xl font-bold"
               [class]="mydata.queueStatus + ' ' + mydata.name + mydata.queueId"
+              [id]="mydata.queueId"
             >
               <div
                 class="w-8 flex flex-row justify-content-center align-items-center"
@@ -76,7 +77,7 @@
           src="../../assets/sample_video.mp4"
           autoplay
           muted
-          loop
+          loop="true"
         ></video>
         <div
           class="flex flex-row justify-content-center gap-4 align-items-center bg-gray-900 text-white w-full px-5 text-4xl font-bold"

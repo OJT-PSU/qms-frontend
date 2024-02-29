@@ -37,6 +37,8 @@ export class Theme0Component implements OnInit {
     src: ['../../assets/sound.mp3'],
     html5: true,
   });
+  last_id: any = null;
+
   constructor(
     private queueService: QueueService,
     private websocketService: WebSocketService,
@@ -46,10 +48,23 @@ export class Theme0Component implements OnInit {
   ngOnInit(): void {
     this.getData();
     this.getConfig();
-    const videoElement = document.querySelector('video');
-    if (videoElement) {
-      videoElement.volume = 0;
-    }
+
+    this.websocketService.queuePingEvent().subscribe((response: any) => {
+      this.sound.play();
+      console.log('hi');
+      const elementToAlert = document.getElementById(response.queueId);
+      elementToAlert?.classList.add('alert');
+      elementToAlert?.classList.remove('notAlert');
+
+      if (this.last_id !== null) {
+        clearTimeout(this.last_id);
+      }
+
+      this.last_id = setTimeout(() => {
+        elementToAlert?.classList.add('notAlert');
+        elementToAlert?.classList.remove('alert');
+      }, 5000);
+    });
 
     this.websocketService.themeUpdateEvent().subscribe((config: any) => {
       const { themeType } = config;
@@ -71,7 +86,24 @@ export class Theme0Component implements OnInit {
           return a.queueId - b.queueId;
         }
       });
-      this.refresh();
+
+      const currentDate = moment();
+
+      this.data = _.filter(this.data, (o) => {
+        const dateItem = moment(o.createdAt);
+        return (
+          currentDate.isSame(dateItem, 'day') &&
+          currentDate.isSame(dateItem, 'month') &&
+          currentDate.isSame(dateItem, 'year')
+        );
+      });
+
+      const filteredQueue = _.filter(this.data, (item) => {
+        return item.queueStatus === 'waiting' || item.queueStatus === 'ongoing';
+      });
+
+      this.display = _.slice(filteredQueue, 0, 7);
+      // this.refresh();
     });
 
     setInterval(() => {
@@ -84,46 +116,50 @@ export class Theme0Component implements OnInit {
     this.year = moment().format('YYYY');
   }
 
-  refresh(): void {
-    this.alertName = '';
-    this.alertQueueId = '';
-    let hasAlreadyPlayed = false;
-    this.hasWaiting = false;
-    setInterval(() => {
-      const parentDiv = document.querySelector('.parentAlert');
-      if (parentDiv) {
-        const elementsToRemove = parentDiv.querySelectorAll('.alert');
-        elementsToRemove.forEach((element) =>
-          element.classList.remove('alert')
-        );
-      }
-      this.alertName = '';
-    }, 5000);
-    this.data.forEach((item) => {
-      if (item.queueStatus == 'ongoing' && !hasAlreadyPlayed) {
-        this.sound.play();
-        hasAlreadyPlayed = true;
-      }
-    });
+  // refresh(): void {
+  //   this.alertName = '';
+  //   this.alertQueueId = '';
+  //   let hasAlreadyPlayed = false;
+  //   this.hasWaiting = false;
+  //   setInterval(() => {
+  //     const parentDiv = document.querySelector('.parentAlert');
+  //     if (parentDiv) {
+  //       const elementsToRemove = parentDiv.querySelectorAll('.alert');
+  //       elementsToRemove.forEach((element) =>
+  //         element.classList.remove('alert')
+  //       );
+  //     }
+  //     this.alertName = '';
+  //   }, 5000);
+  //   this.data.forEach((item) => {
+  //     if (item.queueStatus == 'ongoing' && !hasAlreadyPlayed) {
+  //       this.sound.play();
+  //       hasAlreadyPlayed = true;
+  //     }
+  //   });
 
-    const currentDate = moment();
-    this.data = _.filter(this.data, (o) => {
-      const dateItem = moment(o.createdAt);
-      return (
-        currentDate.isSame(dateItem, 'day') &&
-        currentDate.isSame(dateItem, 'month') &&
-        currentDate.isSame(dateItem, 'year')
-      );
-    });
+  //   const currentDate = moment();
+  //   this.data = _.filter(this.data, (o) => {
+  //     const dateItem = moment(o.createdAt);
+  //     return (
+  //       currentDate.isSame(dateItem, 'day') &&
+  //       currentDate.isSame(dateItem, 'month') &&
+  //       currentDate.isSame(dateItem, 'year')
+  //     );
+  //   });
 
-    const filter = _.filter(this.data, (item) => {
-      return item.queueStatus === 'waiting' || item.queueStatus === 'ongoing';
-    });
-    this.display = _.slice(filter, 0, 7);
-  }
+  //   const filter = _.filter(this.data, (item) => {
+  //     return item.queueStatus === 'waiting' || item.queueStatus === 'ongoing';
+  //   });
+  //   this.display = _.slice(filter, 0, 7);
+  //   console.log(this.display);
+  // }
+
   getData(): void {
     this.queueService.getQueueCustomer().subscribe(
       (response) => {
+        const currentDate = moment();
+
         this.data = response.sort((a, b) => {
           if (
             a.queueStatus == 'waiting' ||
@@ -137,7 +173,23 @@ export class Theme0Component implements OnInit {
             return a.queueId - b.queueId;
           }
         });
-        this.refresh();
+
+        this.data = _.filter(this.data, (o) => {
+          const dateItem = moment(o.createdAt);
+          return (
+            currentDate.isSame(dateItem, 'day') &&
+            currentDate.isSame(dateItem, 'month') &&
+            currentDate.isSame(dateItem, 'year')
+          );
+        });
+
+        const filteredQueue = _.filter(this.data, (item) => {
+          return (
+            item.queueStatus === 'waiting' || item.queueStatus === 'ongoing'
+          );
+        });
+
+        this.display = _.slice(filteredQueue, 0, 7);
       },
       (error) => {
         console.error('Error fetching data:', error);

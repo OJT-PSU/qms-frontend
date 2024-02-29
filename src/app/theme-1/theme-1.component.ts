@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { QueueService } from '../queue.service';
 import { WebSocketService } from '../socket/web-socket.service';
+import { CommonModule } from '@angular/common';
 import moment from 'moment';
 import _ from 'lodash';
 import { Howl, Howler } from 'howler';
@@ -9,14 +10,15 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'app-theme-1',
   standalone: true,
+  imports: [CommonModule],
   templateUrl: './theme-1.component.html',
   styleUrl: './theme-1.component.css',
 })
 export class Theme1Component implements OnInit {
   data: any[] = [];
-  payment: any[] = [];
-  checkReleasing: any[] = [];
-  inquiry: any[] = [];
+  ongoingPayment: any[] = [];
+  ongoingCheckReleasing: any[] = [];
+  ongoingInquiry: any[] = [];
 
   selectedInquiry: any[] = [];
   selectedCheckReleasing: any[] = [];
@@ -43,6 +45,8 @@ export class Theme1Component implements OnInit {
     src: ['../../assets/sound.mp3'],
     html5: true,
   });
+  last_id: any = null;
+
   constructor(
     private queueService: QueueService,
     private websocketService: WebSocketService,
@@ -52,28 +56,26 @@ export class Theme1Component implements OnInit {
   ngOnInit(): void {
     this.getData();
     this.getConfig();
-    const videoElement = document.querySelector('video');
-    if (videoElement) {
-      videoElement.volume = 0;
-    }
 
     this.websocketService.themeUpdateEvent().subscribe((config: any) => {
       const { themeType } = config;
       this.router.navigate([`/theme/`, `${themeType}`]);
-      console.log(themeType);
     });
 
-    this.websocketService.queuePingEvent().subscribe((response) => {
-      this.alertName = '';
-      this.alertQueueId = '';
-      this.alertName = '';
-      this.alertQueue = response;
-      this.alertName = this.alertQueue.name;
-      this.alertQueueId = this.alertQueue.queueId;
-      const alertNow = this.alertName + '' + this.alertQueueId;
-      const putAlert = document.querySelector(`.${alertNow}`);
-      putAlert?.classList.add('alert');
+    this.websocketService.queuePingEvent().subscribe((response: any) => {
       this.sound.play();
+      const elementToAlert = document.getElementById(response.queueId);
+      elementToAlert?.classList.add('alert');
+      elementToAlert?.classList.remove('notAlert');
+
+      if (this.last_id !== null) {
+        clearTimeout(this.last_id);
+      }
+
+      this.last_id = setTimeout(() => {
+        elementToAlert?.classList.add('notAlert');
+        elementToAlert?.classList.remove('alert');
+      }, 5000);
     });
 
     this.websocketService.queueUpdateEvent().subscribe((response) => {
@@ -90,7 +92,45 @@ export class Theme1Component implements OnInit {
           return a.queueId - b.queueId;
         }
       });
-      this.refresh();
+
+      // Filter ongoing for each transaction type
+
+      this.ongoingPayment = this.data.filter(
+        (item) =>
+          item.transactionType === 'payment' &&
+          item.queueStatus === 'ongoing' &&
+          item.toDisplay === 0
+      );
+
+      this.ongoingCheckReleasing = this.data.filter(
+        (item) =>
+          item.transactionType === 'checkReleasing' &&
+          item.queueStatus === 'ongoing' &&
+          item.toDisplay === 0
+      );
+      this.ongoingInquiry = this.data.filter(
+        (item) =>
+          item.transactionType === 'inquiry' &&
+          item.queueStatus === 'ongoing' &&
+          item.toDisplay === 0
+      );
+
+      const currentDate = moment();
+
+      this.data = _.filter(this.data, (o) => {
+        const dateItem = moment(o.createdAt);
+        return (
+          currentDate.isSame(dateItem, 'day') &&
+          currentDate.isSame(dateItem, 'month') &&
+          currentDate.isSame(dateItem, 'year')
+        );
+      });
+
+      this.data = _.filter(this.data, (item) => {
+        return item.queueStatus === 'waiting' || item.queueStatus === 'ongoing';
+      });
+
+      // this.refresh();
     });
     setInterval(() => {
       this.amPm = moment().format('A');
@@ -102,69 +142,70 @@ export class Theme1Component implements OnInit {
     this.year = moment().format('YYYY');
   }
 
-  refresh(): void {
-    this.alertName = '';
-    this.alertQueueId = '';
-    let hasAlreadyPlayed = false;
-    this.hasWaiting = false;
-    this.selectedPayment = [{ status: '' }];
-    this.selectedCheckReleasing = [{ status: '' }];
-    this.selectedInquiry = [{ status: '' }];
-    setInterval(() => {
-      const parentDiv = document.querySelector('.parentAlert');
-      if (parentDiv) {
-        const elementsToRemove = parentDiv.querySelectorAll('.alert');
-        elementsToRemove.forEach((element) =>
-          element.classList.remove('alert')
-        );
-      }
-      this.alertName = '';
-    }, 5000);
-    this.data.forEach((item) => {
-      if (item.queueStatus == 'ongoing' && !hasAlreadyPlayed) {
-        this.sound.play();
-        hasAlreadyPlayed = true;
-      }
-      if (
-        item.toDisplay === 0 &&
-        item.queueStatus != 'waiting' &&
-        item.transactionType === 'inquiry'
-      ) {
-        this.selectedInquiry = [
-          { name: item.name, queueId: item.queueId, status: item.queueStatus },
-        ];
-      }
-      if (
-        item.toDisplay === 0 &&
-        item.queueStatus != 'waiting' &&
-        item.transactionType === 'payment'
-      ) {
-        this.selectedPayment = [
-          { name: item.name, queueId: item.queueId, status: item.queueStatus },
-        ];
-      }
-      if (
-        item.toDisplay === 0 &&
-        item.queueStatus != 'waiting' &&
-        item.transactionType === 'checkReleasing'
-      ) {
-        this.selectedCheckReleasing = [
-          { name: item.name, queueId: item.queueId, status: item.queueStatus },
-        ];
-      }
-    });
+  // refresh(): void {
+  //   this.alertName = '';
+  //   this.alertQueueId = '';
+  //   let hasAlreadyPlayed = false;
+  //   this.hasWaiting = false;
+  //   this.selectedPayment = [{ status: '' }];
+  //   this.selectedCheckReleasing = [{ status: '' }];
+  //   this.selectedInquiry = [{ status: '' }];
+  //   setInterval(() => {
+  //     const parentDiv = document.querySelector('.parentAlert');
+  //     if (parentDiv) {
+  //       const elementsToRemove = parentDiv.querySelectorAll('.alert');
+  //       elementsToRemove.forEach((element) =>
+  //         element.classList.remove('alert')
+  //       );
+  //     }
+  //     this.alertName = '';
+  //   }, 5000);
+  //   this.data.forEach((item) => {
+  //     if (item.queueStatus == 'ongoing' && !hasAlreadyPlayed) {
+  //       this.sound.play();
+  //       hasAlreadyPlayed = true;
+  //     }
+  //     if (
+  //       item.toDisplay === 0 &&
+  //       item.queueStatus != 'waiting' &&
+  //       item.transactionType === 'inquiry'
+  //     ) {
+  //       this.selectedInquiry = [
+  //         { name: item.name, queueId: item.queueId, status: item.queueStatus },
+  //       ];
+  //     }
+  //     if (
+  //       item.toDisplay === 0 &&
+  //       item.queueStatus != 'waiting' &&
+  //       item.transactionType === 'payment'
+  //     ) {
+  //       this.selectedPayment = [
+  //         { name: item.name, queueId: item.queueId, status: item.queueStatus },
+  //       ];
+  //     }
+  //     if (
+  //       item.toDisplay === 0 &&
+  //       item.queueStatus != 'waiting' &&
+  //       item.transactionType === 'checkReleasing'
+  //     ) {
+  //       this.selectedCheckReleasing = [
+  //         { name: item.name, queueId: item.queueId, status: item.queueStatus },
+  //       ];
+  //     }
+  //   });
 
-    const currentDate = moment();
-    this.data = _.filter(this.data, (o) => {
-      const dateItem = moment(o.createdAt);
-      return (
-        currentDate.isSame(dateItem, 'day') &&
-        currentDate.isSame(dateItem, 'month') &&
-        currentDate.isSame(dateItem, 'year')
-      );
-    });
-    console.log('EXECUTED from oninit ');
-  }
+  //   const currentDate = moment();
+  //   this.data = _.filter(this.data, (o) => {
+  //     const dateItem = moment(o.createdAt);
+  //     return (
+  //       currentDate.isSame(dateItem, 'day') &&
+  //       currentDate.isSame(dateItem, 'month') &&
+  //       currentDate.isSame(dateItem, 'year')
+  //     );
+  //   });
+  //   console.log('EXECUTED from oninit ');
+  // }
+
   getData(): void {
     this.queueService.getQueueCustomer().subscribe(
       (response) => {
@@ -181,7 +222,40 @@ export class Theme1Component implements OnInit {
             return a.queueId - b.queueId;
           }
         });
-        this.refresh();
+
+        const currentDate = moment();
+
+        this.data = _.filter(this.data, (o) => {
+          const dateItem = moment(o.createdAt);
+          return (
+            currentDate.isSame(dateItem, 'day') &&
+            currentDate.isSame(dateItem, 'month') &&
+            currentDate.isSame(dateItem, 'year')
+          );
+        });
+
+        this.data = _.filter(this.data, (item) => {
+          return (
+            item.queueStatus === 'waiting' || item.queueStatus === 'ongoing'
+          );
+        });
+
+        this.ongoingPayment = this.data.filter(
+          (item) =>
+            item.transactionType === 'payment' && item.queueStatus === 'ongoing'
+        );
+
+        this.ongoingCheckReleasing = this.data.filter(
+          (item) =>
+            item.transactionType === 'checkReleasing' &&
+            item.queueStatus === 'ongoing'
+        );
+        this.ongoingInquiry = this.data.filter(
+          (item) =>
+            item.transactionType === 'inquiry' && item.queueStatus === 'ongoing'
+        );
+
+        // this.refresh();
       },
       (error) => {
         console.error('Error fetching data:', error);
@@ -192,7 +266,6 @@ export class Theme1Component implements OnInit {
   getConfig(): void {
     this.queueService.getConfig().subscribe(
       (response) => {
-        console.log(response);
         const { dispMsg, scrollTime, video } = response[0];
         this.videoUrl = '../../assets/' + video;
         this.animation = scrollTime;
