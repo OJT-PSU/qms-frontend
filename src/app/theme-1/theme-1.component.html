@@ -147,9 +147,10 @@
         <video
           class="w-full"
           src="../../assets/sample_video.mp4"
-          autoplay
-          muted
-          loop
+          #video
+          (canplay)="video.play()"
+          (loadedmetadata)="video.muted = true"
+          (ended)="video.play()"
         ></video>
         <div
           class="flex flex-row justify-content-center gap-4 align-items-center bg-gray-900 text-white w-full px-5 text-4xl font-bold"

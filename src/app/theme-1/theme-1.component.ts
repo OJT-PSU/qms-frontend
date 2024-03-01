@@ -132,6 +132,7 @@ export class Theme1Component implements OnInit {
 
       // this.refresh();
     });
+
     setInterval(() => {
       this.amPm = moment().format('A');
       this.getHour = moment().format('h');

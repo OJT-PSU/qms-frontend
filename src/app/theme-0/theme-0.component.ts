@@ -51,7 +51,6 @@ export class Theme0Component implements OnInit {
 
     this.websocketService.queuePingEvent().subscribe((response: any) => {
       this.sound.play();
-      console.log('hi');
       const elementToAlert = document.getElementById(response.queueId);
       elementToAlert?.classList.add('alert');
       elementToAlert?.classList.remove('notAlert');
@@ -115,45 +114,6 @@ export class Theme0Component implements OnInit {
     this.day = moment().format('DD');
     this.year = moment().format('YYYY');
   }
-
-  // refresh(): void {
-  //   this.alertName = '';
-  //   this.alertQueueId = '';
-  //   let hasAlreadyPlayed = false;
-  //   this.hasWaiting = false;
-  //   setInterval(() => {
-  //     const parentDiv = document.querySelector('.parentAlert');
-  //     if (parentDiv) {
-  //       const elementsToRemove = parentDiv.querySelectorAll('.alert');
-  //       elementsToRemove.forEach((element) =>
-  //         element.classList.remove('alert')
-  //       );
-  //     }
-  //     this.alertName = '';
-  //   }, 5000);
-  //   this.data.forEach((item) => {
-  //     if (item.queueStatus == 'ongoing' && !hasAlreadyPlayed) {
-  //       this.sound.play();
-  //       hasAlreadyPlayed = true;
-  //     }
-  //   });
-
-  //   const currentDate = moment();
-  //   this.data = _.filter(this.data, (o) => {
-  //     const dateItem = moment(o.createdAt);
-  //     return (
-  //       currentDate.isSame(dateItem, 'day') &&
-  //       currentDate.isSame(dateItem, 'month') &&
-  //       currentDate.isSame(dateItem, 'year')
-  //     );
-  //   });
-
-  //   const filter = _.filter(this.data, (item) => {
-  //     return item.queueStatus === 'waiting' || item.queueStatus === 'ongoing';
-  //   });
-  //   this.display = _.slice(filter, 0, 7);
-  //   console.log(this.display);
-  // }
 
   getData(): void {
     this.queueService.getQueueCustomer().subscribe(
