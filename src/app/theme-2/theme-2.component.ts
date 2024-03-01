@@ -120,28 +120,6 @@ export class Theme2Component implements OnInit {
   }
 
   refresh(): void {
-    this.alertName = '';
-    this.alertQueueId = '';
-    let hasAlreadyPlayed = false;
-    this.hasWaiting = false;
-
-    setInterval(() => {
-      const parentDiv = document.querySelector('.parentAlert');
-      if (parentDiv) {
-        const elementsToRemove = parentDiv.querySelectorAll('.alert');
-        elementsToRemove.forEach((element) =>
-          element.classList.remove('alert')
-        );
-      }
-      this.alertName = '';
-    }, 5000);
-    this.data.forEach((item) => {
-      if (item.queueStatus == 'ongoing' && !hasAlreadyPlayed) {
-        this.sound.play();
-        hasAlreadyPlayed = true;
-      }
-    });
-
     const currentDate = moment();
     this.data = _.filter(this.data, (o) => {
       const dateItem = moment(o.createdAt);
