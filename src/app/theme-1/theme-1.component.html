@@ -28,7 +28,11 @@
             [class.notAlert]="
               alertName !== item.name || alertQueueId !== item.queueId
             "
-            >{{ item.name }}-{{ item.terminal }}</span
+            >{{
+              item.name.length <= 9
+                ? item.name
+                : item.name.substring(0, 8) + "..."
+            }}-{{ item.terminal }}</span
           >} }
         </div>
         <div class="w-4">
@@ -51,7 +55,11 @@
             [class.notAlert]="
               alertName !== item.name || alertQueueId !== item.queueId
             "
-            >{{ item.name }}-{{ item.terminal }}</span
+            >{{
+              item.name.length <= 9
+                ? item.name
+                : item.name.substring(0, 8) + "..."
+            }}-{{ item.terminal }}</span
           >} }
         </div>
         <div class="w-4">
@@ -73,7 +81,11 @@
             [class.notAlert]="
               alertName !== item.name || alertQueueId !== item.queueId
             "
-            >{{ item.name }}-{{ item.terminal }}</span
+            >{{
+              item.name.length <= 9
+                ? item.name
+                : item.name.substring(0, 8) + "..."
+            }}-{{ item.terminal }}</span
           >} }
         </div>
       </div>
@@ -89,7 +101,7 @@
       >
         <!-- Payment List -->
         <div class="flex flex-column w-4 gap-2">
-          @for (payment of data; track payment.queueId){
+          @for (payment of waitingPayment; track payment.queueId){
           @if(payment.transactionType=="payment" &&
           payment.queueStatus=="waiting" && payment.toDisplay === 0){
           <div
@@ -102,10 +114,8 @@
         </div>
         <!-- Check Releasing -->
         <div class="flex flex-column w-4 gap-2">
-          @for (checkReleasing of data; track checkReleasing.queueId){
-          @if(checkReleasing.transactionType=="checkReleasing" &&
-          checkReleasing.queueStatus=="waiting" && checkReleasing.toDisplay ===
-          0){
+          @for (checkReleasing of waitingCheckReleasing; track
+          checkReleasing.queueId){
 
           <div
             class="border-1 flex flex-row px-5 justify-content-between align-items-center h-5rem text-6xl font-bold"
@@ -113,21 +123,18 @@
             <p>{{ checkReleasing.name }}</p>
             <p>{{ checkReleasing.index }}</p>
           </div>
-          }}
+          }
         </div>
         <!-- Inquiry -->
         <div class="flex flex-column w-4 gap-2">
-          @for (inquiry of data; track inquiry.queueId){
-          @if(inquiry.transactionType=="inquiry" &&
-          inquiry.queueStatus=="waiting" && inquiry.toDisplay === 0){
-
+          @for (inquiry of waitingInquiry; track inquiry.queueId){
           <div
             class="border-1 flex flex-row px-5 justify-content-between align-items-center h-5rem text-6xl font-bold"
           >
             <p>{{ inquiry.name }}</p>
             <p>{{ inquiry.index }}</p>
           </div>
-          }}
+          }
         </div>
       </div>
     </div>

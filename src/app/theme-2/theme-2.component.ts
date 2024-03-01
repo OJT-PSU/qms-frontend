@@ -133,15 +133,20 @@ export class Theme2Component implements OnInit {
     this.payment = _.filter(this.data, (o) => {
       return o.queueStatus != 'accommodated' && o.transactionType == 'payment';
     });
+    this.payment = _.slice(this.payment, 0, 7);
     this.checkReleasing = _.filter(this.data, (o) => {
       return (
         o.queueStatus != 'accommodated' && o.transactionType == 'checkReleasing'
       );
     });
+    this.checkReleasing = _.slice(this.checkReleasing, 0, 7);
+
     this.inquiry = _.filter(this.data, (o) => {
       return o.queueStatus != 'accommodated' && o.transactionType == 'inquiry';
     });
+    this.inquiry = _.slice(this.inquiry, 0, 7);
   }
+
   getData(): void {
     this.queueService.getQueueCustomer().subscribe(
       (response) => {

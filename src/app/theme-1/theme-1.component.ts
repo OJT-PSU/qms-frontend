@@ -20,6 +20,10 @@ export class Theme1Component implements OnInit {
   ongoingCheckReleasing: any[] = [];
   ongoingInquiry: any[] = [];
 
+  waitingPayment: any[] = [];
+  waitingCheckReleasing: any[] = [];
+  waitingInquiry: any[] = [];
+
   selectedInquiry: any[] = [];
   selectedCheckReleasing: any[] = [];
   selectedPayment: any[] = [];
@@ -93,6 +97,22 @@ export class Theme1Component implements OnInit {
         }
       });
 
+      const currentDate = moment();
+
+      this.data = _.filter(this.data, (o) => {
+        const dateItem = moment(o.createdAt);
+        return (
+          currentDate.isSame(dateItem, 'day') &&
+          currentDate.isSame(dateItem, 'month') &&
+          currentDate.isSame(dateItem, 'year') &&
+          o.toDisplay === 0
+        );
+      });
+
+      this.data = _.filter(this.data, (item) => {
+        return item.queueStatus === 'waiting' || item.queueStatus === 'ongoing';
+      });
+      console.log({ data: this.data });
       // Filter ongoing for each transaction type
 
       this.ongoingPayment = this.data.filter(
@@ -102,12 +122,27 @@ export class Theme1Component implements OnInit {
           item.toDisplay === 0
       );
 
+      this.waitingPayment = this.data.filter(
+        (item) =>
+          item.transactionType === 'payment' &&
+          item.queueStatus === 'waiting' &&
+          item.toDisplay === 0
+      );
+
       this.ongoingCheckReleasing = this.data.filter(
         (item) =>
           item.transactionType === 'checkReleasing' &&
           item.queueStatus === 'ongoing' &&
           item.toDisplay === 0
       );
+
+      this.waitingCheckReleasing = this.data.filter(
+        (item) =>
+          item.transactionType === 'checkReleasing' &&
+          item.queueStatus === 'waiting' &&
+          item.toDisplay === 0
+      );
+
       this.ongoingInquiry = this.data.filter(
         (item) =>
           item.transactionType === 'inquiry' &&
@@ -115,22 +150,16 @@ export class Theme1Component implements OnInit {
           item.toDisplay === 0
       );
 
-      const currentDate = moment();
+      this.waitingInquiry = this.data.filter(
+        (item) =>
+          item.transactionType === 'inquiry' &&
+          item.queueStatus === 'waiting' &&
+          item.toDisplay === 0
+      );
 
-      this.data = _.filter(this.data, (o) => {
-        const dateItem = moment(o.createdAt);
-        return (
-          currentDate.isSame(dateItem, 'day') &&
-          currentDate.isSame(dateItem, 'month') &&
-          currentDate.isSame(dateItem, 'year')
-        );
-      });
-
-      this.data = _.filter(this.data, (item) => {
-        return item.queueStatus === 'waiting' || item.queueStatus === 'ongoing';
-      });
-
-      // this.refresh();
+      this.waitingPayment = _.slice(this.waitingPayment, 0, 5);
+      this.waitingCheckReleasing = _.slice(this.waitingCheckReleasing, 0, 5);
+      this.waitingInquiry = _.slice(this.waitingInquiry, 0, 5);
     });
 
     setInterval(() => {
@@ -142,70 +171,6 @@ export class Theme1Component implements OnInit {
     this.day = moment().format('DD');
     this.year = moment().format('YYYY');
   }
-
-  // refresh(): void {
-  //   this.alertName = '';
-  //   this.alertQueueId = '';
-  //   let hasAlreadyPlayed = false;
-  //   this.hasWaiting = false;
-  //   this.selectedPayment = [{ status: '' }];
-  //   this.selectedCheckReleasing = [{ status: '' }];
-  //   this.selectedInquiry = [{ status: '' }];
-  //   setInterval(() => {
-  //     const parentDiv = document.querySelector('.parentAlert');
-  //     if (parentDiv) {
-  //       const elementsToRemove = parentDiv.querySelectorAll('.alert');
-  //       elementsToRemove.forEach((element) =>
-  //         element.classList.remove('alert')
-  //       );
-  //     }
-  //     this.alertName = '';
-  //   }, 5000);
-  //   this.data.forEach((item) => {
-  //     if (item.queueStatus == 'ongoing' && !hasAlreadyPlayed) {
-  //       this.sound.play();
-  //       hasAlreadyPlayed = true;
-  //     }
-  //     if (
-  //       item.toDisplay === 0 &&
-  //       item.queueStatus != 'waiting' &&
-  //       item.transactionType === 'inquiry'
-  //     ) {
-  //       this.selectedInquiry = [
-  //         { name: item.name, queueId: item.queueId, status: item.queueStatus },
-  //       ];
-  //     }
-  //     if (
-  //       item.toDisplay === 0 &&
-  //       item.queueStatus != 'waiting' &&
-  //       item.transactionType === 'payment'
-  //     ) {
-  //       this.selectedPayment = [
-  //         { name: item.name, queueId: item.queueId, status: item.queueStatus },
-  //       ];
-  //     }
-  //     if (
-  //       item.toDisplay === 0 &&
-  //       item.queueStatus != 'waiting' &&
-  //       item.transactionType === 'checkReleasing'
-  //     ) {
-  //       this.selectedCheckReleasing = [
-  //         { name: item.name, queueId: item.queueId, status: item.queueStatus },
-  //       ];
-  //     }
-  //   });
-
-  //   const currentDate = moment();
-  //   this.data = _.filter(this.data, (o) => {
-  //     const dateItem = moment(o.createdAt);
-  //     return (
-  //       currentDate.isSame(dateItem, 'day') &&
-  //       currentDate.isSame(dateItem, 'month') &&
-  //       currentDate.isSame(dateItem, 'year')
-  //     );
-  //   });
-  //   console.log('EXECUTED from oninit ');
-  // }
 
   getData(): void {
     this.queueService.getQueueCustomer().subscribe(
@@ -231,7 +196,8 @@ export class Theme1Component implements OnInit {
           return (
             currentDate.isSame(dateItem, 'day') &&
             currentDate.isSame(dateItem, 'month') &&
-            currentDate.isSame(dateItem, 'year')
+            currentDate.isSame(dateItem, 'year') &&
+            o.toDisplay === 0
           );
         });
 
@@ -240,23 +206,54 @@ export class Theme1Component implements OnInit {
             item.queueStatus === 'waiting' || item.queueStatus === 'ongoing'
           );
         });
+        console.log({ data: this.data });
+        // Filter ongoing for each transaction type
 
         this.ongoingPayment = this.data.filter(
           (item) =>
-            item.transactionType === 'payment' && item.queueStatus === 'ongoing'
+            item.transactionType === 'payment' &&
+            item.queueStatus === 'ongoing' &&
+            item.toDisplay === 0
+        );
+
+        this.waitingPayment = this.data.filter(
+          (item) =>
+            item.transactionType === 'payment' &&
+            item.queueStatus === 'waiting' &&
+            item.toDisplay === 0
         );
 
         this.ongoingCheckReleasing = this.data.filter(
           (item) =>
             item.transactionType === 'checkReleasing' &&
-            item.queueStatus === 'ongoing'
-        );
-        this.ongoingInquiry = this.data.filter(
-          (item) =>
-            item.transactionType === 'inquiry' && item.queueStatus === 'ongoing'
+            item.queueStatus === 'ongoing' &&
+            item.toDisplay === 0
         );
 
-        // this.refresh();
+        this.waitingCheckReleasing = this.data.filter(
+          (item) =>
+            item.transactionType === 'checkReleasing' &&
+            item.queueStatus === 'waiting' &&
+            item.toDisplay === 0
+        );
+
+        this.ongoingInquiry = this.data.filter(
+          (item) =>
+            item.transactionType === 'inquiry' &&
+            item.queueStatus === 'ongoing' &&
+            item.toDisplay === 0
+        );
+
+        this.waitingInquiry = this.data.filter(
+          (item) =>
+            item.transactionType === 'inquiry' &&
+            item.queueStatus === 'waiting' &&
+            item.toDisplay === 0
+        );
+
+        this.waitingPayment = _.slice(this.waitingPayment, 0, 5);
+        this.waitingCheckReleasing = _.slice(this.waitingCheckReleasing, 0, 5);
+        this.waitingInquiry = _.slice(this.waitingInquiry, 0, 5);
       },
       (error) => {
         console.error('Error fetching data:', error);
