@@ -39,11 +39,11 @@
           <div
             [class]="payment.queueStatus + ' ' + payment.name + payment.queueId"
             [id]="payment.queueId"
-            class="border-1 flex flex-row px-5 justify-content-between align-items-center h-5rem text-4xl font-bold"
+            class="border-1 flex flex-row px-2 justify-content-between align-items-center h-5rem text-4xl font-bold"
           >
             <p>{{ payment.name.toUpperCase() }}</p>
             @if(payment.terminal != null){
-            <p>{{ "W" + payment.terminal }}</p>
+            <p>{{ payment.terminal }}</p>
             }
           </div>
           }
@@ -59,11 +59,11 @@
               checkReleasing.queueId
             "
             [id]="checkReleasing.queueId"
-            class="border-1 flex flex-row px-5 justify-content-between align-items-center h-5rem text-4xl font-bold"
+            class="border-1 flex flex-row px-2 justify-content-between align-items-center h-5rem text-4xl font-bold"
           >
             <p>{{ checkReleasing.name.toUpperCase() }}</p>
             @if(checkReleasing.terminal != null){
-            <p>{{ "W" + checkReleasing.terminal }}</p>
+            <p>{{ checkReleasing.terminal }}</p>
             }
           </div>
           }
@@ -74,11 +74,11 @@
           <div
             [class]="inquiry.queueStatus + ' ' + inquiry.name + inquiry.queueId"
             [id]="inquiry.queueId"
-            class="border-1 flex flex-row px-5 justify-content-between align-items-center h-5rem text-4xl font-bold"
+            class="border-1 flex flex-row px-2 justify-content-between align-items-center h-5rem text-4xl font-bold"
           >
             <p>{{ inquiry.name.toUpperCase() }}</p>
             @if(inquiry.terminal != null){
-            <p>{{ "W" + inquiry.terminal }}</p>
+            <p>{{ inquiry.terminal }}</p>
             }
           </div>
           }

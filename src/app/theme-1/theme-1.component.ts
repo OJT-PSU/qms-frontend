@@ -16,6 +16,8 @@ import { Router } from '@angular/router';
   styleUrl: './theme-1.component.css',
 })
 export class Theme1Component implements OnInit {
+  slice: number = 0;
+
   data: any[] = [];
   ongoingPayment: any[] = [];
   ongoingCheckReleasing: any[] = [];
@@ -158,9 +160,19 @@ export class Theme1Component implements OnInit {
           item.toDisplay === 0
       );
 
-      this.waitingPayment = _.slice(this.waitingPayment, 0, 5);
-      this.waitingCheckReleasing = _.slice(this.waitingCheckReleasing, 0, 5);
-      this.waitingInquiry = _.slice(this.waitingInquiry, 0, 5);
+      const maxDisplay = _.max([
+        this.ongoingPayment.length,
+        this.ongoingCheckReleasing.length,
+        this.ongoingInquiry.length,
+      ]);
+      const leftToDisplay = 5 - (maxDisplay ? maxDisplay : 0);
+      this.waitingPayment = _.slice(this.waitingPayment, 0, leftToDisplay);
+      this.waitingCheckReleasing = _.slice(
+        this.waitingCheckReleasing,
+        0,
+        leftToDisplay
+      );
+      this.waitingInquiry = _.slice(this.waitingInquiry, 0, leftToDisplay);
     });
 
     setInterval(() => {
@@ -250,10 +262,19 @@ export class Theme1Component implements OnInit {
             item.queueStatus === 'waiting' &&
             item.toDisplay === 0
         );
-
-        this.waitingPayment = _.slice(this.waitingPayment, 0, 5);
-        this.waitingCheckReleasing = _.slice(this.waitingCheckReleasing, 0, 5);
-        this.waitingInquiry = _.slice(this.waitingInquiry, 0, 5);
+        const maxDisplay = _.max([
+          this.ongoingPayment.length,
+          this.ongoingCheckReleasing.length,
+          this.ongoingInquiry.length,
+        ]);
+        const leftToDisplay = 5 - (maxDisplay ? maxDisplay : 0);
+        this.waitingPayment = _.slice(this.waitingPayment, 0, leftToDisplay);
+        this.waitingCheckReleasing = _.slice(
+          this.waitingCheckReleasing,
+          0,
+          leftToDisplay
+        );
+        this.waitingInquiry = _.slice(this.waitingInquiry, 0, leftToDisplay);
       },
       (error) => {
         console.error('Error fetching data:', error);

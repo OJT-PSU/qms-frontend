@@ -72,20 +72,46 @@
         <img class="h-5rem w-5rem" src="../../assets/capitol.png" alt="" />
       </div>
       <div class="flex w-full px-5 flex-column align-items-center">
-        <video
-          class="w-full"
-          src="../../assets/sample_video.mp4"
-          #video
-          (canplay)="video.play()"
-          (loadedmetadata)="video.muted = true"
-          (ended)="video.play()"
-        ></video>
-        <div
-          class="flex flex-row justify-content-center gap-4 align-items-center bg-gray-900 text-white w-full px-5 text-4xl font-bold"
-        >
-          <p>{{ month }}</p>
-          <p>{{ day }},</p>
-          <p>{{ year }}</p>
+        <div>
+          <video
+            class="w-full"
+            src="../../assets/sample_video.mp4"
+            #video
+            (canplay)="video.play()"
+            (loadedmetadata)="video.muted = true"
+            (ended)="video.play()"
+          ></video>
+          <div
+            class="flex flex-row justify-content-center gap-4 align-items-center bg-gray-900 text-white w-full px-5 text-4xl font-bold"
+          >
+            <p>{{ month }}</p>
+            <p>{{ day }},</p>
+            <p>{{ year }}</p>
+          </div>
+        </div>
+        <div class="w-full py-2 flex flex-col justify-content-evenly">
+          <div class="w-full text-3xl">
+            @for (item of extraLeft; track item.queueId){
+            <div
+              class="flex flex-row justify-content-between px-2"
+              [class]="item.queueStatus"
+            >
+              <p class="m-0">{{ item.name }}</p>
+              <p class="m-0">{{ item.terminal }}</p>
+            </div>
+            }
+          </div>
+          <div class="w-full text-3xl">
+            @for (item of extraRight; track item.queueId){
+            <div
+              class="flex flex-row justify-content-between px-2"
+              [class]="item.queueStatus"
+            >
+              <p class="m-0">{{ item.name }}</p>
+              <p class="m-0">{{ item.terminal }}</p>
+            </div>
+            }
+          </div>
         </div>
       </div>
     </div>

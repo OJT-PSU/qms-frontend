@@ -8,85 +8,81 @@
         <p>Now Serving</p>
       </div>
       <!-- Column Header -->
-      <div class="flex flex-row gap-5">
+      <div class="flex flex-row gap-2">
         <div class="w-4">
           <div
-            class="w-full border-1 flex flex-row px-5 justify-content-center align-items-center h-2rem bg-gray-900 text-white"
+            class="w-full border-1 px-2 flex flex-row justify-content-center align-items-center h-2rem bg-gray-900 text-white"
           >
             PAYMENT
           </div>
           @if(ongoingPayment.length === 0){
           <span
-            class="w-full border-1 flex flex-row px-6 justify-content-center align-items-center h-5rem text-6xl font-bold text-white"
+            class="w-full border-1 flex flex-row px-2 justify-content-center align-items-center h-5rem text-6xl font-bold text-white"
           ></span>
           } @for (item of ongoingPayment; track item.queueId) {
           @if(item.toDisplay === 0) {
           <span
             [id]="item.queueId"
-            class="w-full border-1 flex flex-row px-6 justify-content-center align-items-center h-5rem text-3xl font-bold text-white"
+            class="w-full border-1 flex flex-row px-2 justify-content-center align-items-center h-5rem text-3xl font-bold text-white"
             [class.alert]="alertName === item.name"
             [class.notAlert]="
               alertName !== item.name || alertQueueId !== item.queueId
             "
-            >{{
-              item.name.length <= 9
-                ? item.name
-                : item.name.substring(0, 8) + "..."
-            }}-{{ item.terminal }}</span
+            >{{ item.name }} {{ item.terminal }}</span
           >} }
         </div>
         <div class="w-4">
           <div
-            class="w-full border-1 flex flex-row px-5 justify-content-center align-items-center h-2rem bg-gray-900 text-white"
+            class="w-full border-1 flex flex-row px-2 justify-content-center align-items-center h-2rem bg-gray-900 text-white"
           >
             CHECK RELEASING
           </div>
 
           @if(ongoingCheckReleasing.length === 0){
           <span
-            class="w-full border-1 flex flex-row px-6 justify-content-center align-items-center h-5rem text-6xl font-bold text-white"
+            class="w-full border-1 flex flex-row px-2 justify-content-center align-items-center h-5rem text-6xl font-bold text-white"
           ></span>
           } @for (item of ongoingCheckReleasing; track item.queueId) { @if
           (item.toDisplay === 0) {
           <span
             [id]="item.queueId"
-            class="w-full border-1 flex flex-row px-6 justify-content-center align-items-center h-5rem text-3xl font-bold text-white"
+            class="w-full mb-1 flex flex-row px-2 justify-content-center align-items-center h-5rem text-3xl font-bold text-white"
             [class.alert]="alertName === item.name"
             [class.notAlert]="
               alertName !== item.name || alertQueueId !== item.queueId
             "
-            >{{
-              item.name.length <= 9
-                ? item.name
-                : item.name.substring(0, 8) + "..."
-            }}-{{ item.terminal }}</span
+            ><span>{{ item.name }}</span> <span>{{ item.terminal }}</span></span
           >} }
         </div>
         <div class="w-4">
           <div
-            class="w-full border-1 flex flex-row px-5 justify-content-center align-items-center h-2rem bg-gray-900 text-white"
+            class="w-full border-1 flex flex-row px-2 justify-content-center align-items-center h-2rem bg-gray-900 text-white"
           >
             INQUIRY
           </div>
           @if(ongoingInquiry.length === 0){
           <span
-            class="w-full border-1 flex flex-row px-6 justify-content-center align-items-center h-5rem text-6xl font-bold text-white"
+            class="w-full border-1 flex flex-row px-2 justify-content-center align-items-center h-5rem text-6xl font-bold text-white"
           ></span>
           } @for (item of ongoingInquiry; track item.queueId) { @if
           (item.toDisplay === 0) {
-          <span
-            [id]="item.queueId"
-            class="w-full border-1 flex flex-row px-6 justify-content-center align-items-center h-5rem text-3xl font-bold text-white"
-            [class.alert]="alertName === item.name"
-            [class.notAlert]="
-              alertName !== item.name || alertQueueId !== item.queueId
-            "
-            >{{
-              item.name.length <= 9
-                ? item.name
-                : item.name.substring(0, 8) + "..."
-            }}-{{ item.terminal }}</span
-          >} }
+          <p
+            class="flex flex-row gap-1 align-items-center justify-content-between"
+          >
+            <span
+              [id]="item.queueId"
+              class="w-full border-1 flex flex-row px-2 justify-content-center align-items-center h-5rem text-3xl font-bold text-white"
+              [class.alert]="alertName === item.name"
+              [class.notAlert]="
+                alertName !== item.name || alertQueueId !== item.queueId
+              "
+              >{{ item.name }}
+            </span>
+            <span>
+              {{ item.terminal }}
+            </span>
+          </p>
+          } }
         </div>
       </div>
       <!-- Waiting -->
@@ -97,7 +93,7 @@
       </div>
       <!-- All List -->
       <div
-        class="parentAlert flex flex-row w-12 gap-4 justify-content-center align-items-start"
+        class="parentAlert flex flex-row w-full justify-content-between gap-3 align-items-start"
       >
         <!-- Payment List -->
         <div class="flex flex-column w-4 gap-2">

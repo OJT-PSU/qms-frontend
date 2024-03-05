@@ -16,6 +16,8 @@ import { Router } from '@angular/router';
 export class Theme0Component implements OnInit {
   data: any[] = [];
   display: any[] = [];
+  extraLeft: any[] = [];
+  extraRight: any[] = [];
 
   alertNow: boolean = false;
   alertQueue: any = [];
@@ -103,7 +105,8 @@ export class Theme0Component implements OnInit {
       });
 
       this.display = _.slice(filteredQueue, 0, 7);
-      // this.refresh();
+      this.extraLeft = _.slice(filteredQueue, 7, 11);
+      this.extraRight = _.slice(filteredQueue, 11, 15);
     });
 
     setInterval(() => {
@@ -151,6 +154,8 @@ export class Theme0Component implements OnInit {
         });
 
         this.display = _.slice(filteredQueue, 0, 7);
+        this.extraLeft = _.slice(filteredQueue, 7, 11);
+        this.extraRight = _.slice(filteredQueue, 11, 15);
       },
       (error) => {
         console.error('Error fetching data:', error);
