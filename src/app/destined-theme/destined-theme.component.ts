@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { QueueService } from '../queue.service';
+import { DisplayService } from '../service/display.service';
 import { Router } from '@angular/router';
+
 @Component({
   selector: 'app-destined-theme',
   standalone: true,
@@ -9,12 +10,11 @@ import { Router } from '@angular/router';
   styleUrl: './destined-theme.component.css',
 })
 export class DestinedThemeComponent implements OnInit {
-  constructor(private service: QueueService, private router: Router) {}
+  constructor(private service: DisplayService, private router: Router) {}
   getDestinedTheme(): void {
     this.service.checkThemeActive().subscribe({
       next: (response) => {
         const { themeType } = response;
-        console.log(themeType);
         this.router.navigate([`/theme/`, `${themeType}`]);
       },
       error: (err) => {

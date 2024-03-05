@@ -81,7 +81,6 @@ export class QueueInputComponent {
         this.queueForm.value;
       email = email !== '' ? email : undefined;
       contactNumber = contactNumber !== '' ? contactNumber : undefined;
-      console.log(name, email, contactNumber, transactionType);
 
       if (this.queueForm.valid) {
         const observable = await this.service.createQueueCustomer(
@@ -100,7 +99,6 @@ export class QueueInputComponent {
           )
           .subscribe({
             next: (config) => {
-              console.log({ config });
               this.showSuccess();
               this.queueForm.setValue({
                 name: '',

@@ -30,26 +30,7 @@ export class QueueService {
     return this.http.get<any[]>(`${URL}/queue`);
   }
 
-  getConfig(): Observable<any[]> {
-    return this.http.get<any[]>(`${URL}/display`);
-  }
-
-  getTerminalList(): Observable<any[]> {
-    return this.http.get<any[]>(`${URL}/terminal`);
-  }
-
   updateToDisplayList(): Observable<any[]> {
     return this.http.patch<any>(`${URL}/queue/reset-queue`, {});
-  }
-
-  checkThemeActive(): Observable<any> {
-    return this.http.get<any>(`${URL}/display/theme`);
-  }
-
-  updateThemeType(themeType: number, displayId: number = 1): Observable<any> {
-    return this.http.patch<any>(`${URL}/display/theme`, {
-      displayId,
-      themeType,
-    });
   }
 }

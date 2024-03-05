@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { QueueService } from '../queue.service';
 import { WebSocketService } from '../socket/web-socket.service';
+import { DisplayService } from '../service/display.service';
 import { CommonModule } from '@angular/common';
 import moment from 'moment';
 import _ from 'lodash';
@@ -53,6 +54,7 @@ export class Theme1Component implements OnInit {
 
   constructor(
     private queueService: QueueService,
+    private displayService: DisplayService,
     private websocketService: WebSocketService,
     private router: Router
   ) {}
@@ -112,7 +114,6 @@ export class Theme1Component implements OnInit {
       this.data = _.filter(this.data, (item) => {
         return item.queueStatus === 'waiting' || item.queueStatus === 'ongoing';
       });
-      console.log({ data: this.data });
       // Filter ongoing for each transaction type
 
       this.ongoingPayment = this.data.filter(
@@ -206,7 +207,6 @@ export class Theme1Component implements OnInit {
             item.queueStatus === 'waiting' || item.queueStatus === 'ongoing'
           );
         });
-        console.log({ data: this.data });
         // Filter ongoing for each transaction type
 
         this.ongoingPayment = this.data.filter(
@@ -262,7 +262,7 @@ export class Theme1Component implements OnInit {
   }
 
   getConfig(): void {
-    this.queueService.getConfig().subscribe(
+    this.displayService.getConfig().subscribe(
       (response) => {
         const { dispMsg, scrollTime, video } = response[0];
         this.videoUrl = '../../assets/' + video;

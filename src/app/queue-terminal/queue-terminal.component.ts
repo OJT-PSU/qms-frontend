@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { AdminService } from '../service/admin.service';
 import { QueueService } from '../queue.service';
+import { DisplayService } from '../service/display.service';
+
 import { MessageService } from 'primeng/api';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -107,17 +109,17 @@ export class QueueTerminalComponent {
     private adminService: AdminService,
     private messageService: MessageService,
     private queueService: QueueService,
+    private displayService: DisplayService,
     private confirmationService: ConfirmationService
   ) {}
 
   ngOnInit(): void {
     this.getTerminal();
 
-    this.queueService.checkThemeActive().subscribe({
+    this.displayService.checkThemeActive().subscribe({
       next: (response) => {
         const { themeType } = response;
         this.themeUpdateValue = themeType;
-        console.log(themeType);
       },
       error: (err) => {
         console.log(err);
@@ -127,7 +129,7 @@ export class QueueTerminalComponent {
   }
 
   updateThemeType(value: ThemeType) {
-    this.queueService.updateThemeType(value).subscribe({
+    this.displayService.updateThemeType(value).subscribe({
       error: (error) => {
         this.showError(error);
       },
@@ -156,27 +158,22 @@ export class QueueTerminalComponent {
 
   getTerminal(): void {
     this.adminService.getAllTerminals().subscribe((response) => {
-      console.log(response);
       this.terminalList = response.map((terminal) => ({
         ...terminal,
         isEditing: false,
       }));
     });
-
-    console.log(this.terminalList);
   }
 
   onRowEditInit(terminal: Terminal) {
     this.originalData.set(terminal.terminalId, { ...terminal });
     terminal.isEditing = true;
-    console.log(this.terminalList);
   }
 
   onRowEditSave(terminal: Terminal) {
     terminal.isEditing = false;
     const { terminalName, status, remarks, terminalId, transactionType } =
       terminal;
-    console.log(terminal);
     this.adminService
       .updateTerminal(
         terminalId,
@@ -186,7 +183,6 @@ export class QueueTerminalComponent {
         transactionType
       )
       .subscribe((response) => {
-        console.log(response);
         this.getTerminal();
       });
   }
@@ -215,7 +211,6 @@ export class QueueTerminalComponent {
 
   saveProduct() {
     this.submitted = true;
-    console.log(this.terminal);
     const { terminalName, status, remarks, transactionType } = this.terminal;
 
     this.adminService
@@ -228,7 +223,6 @@ export class QueueTerminalComponent {
       )
       .subscribe({
         next: (config) => {
-          console.log({ config });
           this.getTerminal();
 
           this.showSuccess();
@@ -276,7 +270,6 @@ export class QueueTerminalComponent {
       accept: () => {
         const ids = this.selectedTerminals.map((t) => t.terminalId);
         this.adminService.deleteTerminals(ids).subscribe((response) => {
-          console.log({ response });
           this.getTerminal();
         });
         this.messageService.add({

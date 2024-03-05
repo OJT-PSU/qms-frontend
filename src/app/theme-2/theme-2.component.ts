@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { QueueService } from '../queue.service';
+import { DisplayService } from '../service/display.service';
 import { WebSocketService } from '../socket/web-socket.service';
 import moment from 'moment';
 import _ from 'lodash';
@@ -44,6 +45,7 @@ export class Theme2Component implements OnInit {
   constructor(
     private queueService: QueueService,
     private websocketService: WebSocketService,
+    private displayService: DisplayService,
     private router: Router
   ) {}
 
@@ -54,7 +56,6 @@ export class Theme2Component implements OnInit {
     this.websocketService.themeUpdateEvent().subscribe((config: any) => {
       const { themeType } = config;
       this.router.navigate([`/theme/`, `${themeType}`]);
-      console.log(themeType);
     });
 
     this.websocketService.queuePingEvent().subscribe((response: any) => {
@@ -172,7 +173,7 @@ export class Theme2Component implements OnInit {
   }
 
   getConfig(): void {
-    this.queueService.getConfig().subscribe(
+    this.displayService.getConfig().subscribe(
       (response) => {
         const { dispMsg, scrollTime, video } = response[0];
         this.videoUrl = '../../assets/' + video;

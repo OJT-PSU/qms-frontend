@@ -10,7 +10,6 @@ export class WebSocketService {
 
   sendQueueRequest() {
     this.socket.emit('queue-request');
-    console.log('hiiiiiiiiiiii');
   }
 
   getQueue() {
