@@ -25,4 +25,28 @@ export class DisplayService {
       themeType,
     });
   }
+
+  updateThemeMessage(displayId: number = 1, dispMsg: string) {
+    console.log('helloooo');
+    return this.http.patch<any>(`${URL}/display/theme/message`, {
+      displayId,
+      dispMsg,
+    });
+  }
+
+  updateConfig(
+    displayId: number = 1,
+    dispMsg: string,
+    video: string,
+    themeType: number,
+    scrollTime: string
+  ) {
+    return this.http.put<any>(`${URL}/display`, {
+      displayId,
+      dispMsg,
+      video,
+      themeType,
+      scrollTime,
+    });
+  }
 }
