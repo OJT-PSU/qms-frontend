@@ -1,34 +1,49 @@
-import { Component, OnInit } from '@angular/core';
-import { AdminService } from '../service/admin.service';
+import { Component } from '@angular/core';
 import { QueueService } from '../queue.service';
+import { AdminService } from '../service/admin.service';
 import { DisplayService } from '../service/display.service';
 
-import { MessageService } from 'primeng/api';
-import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { MessageService } from 'primeng/api';
 
-import { TableModule } from 'primeng/table';
-import { ToastModule } from 'primeng/toast';
+import { HttpErrorResponse } from '@angular/common/http';
+import { ConfirmationService } from 'primeng/api';
+import { ButtonModule } from 'primeng/button';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ContextMenuModule } from 'primeng/contextmenu';
 import { DialogModule } from 'primeng/dialog';
-import { ButtonModule } from 'primeng/button';
 import { DropdownModule } from 'primeng/dropdown';
 import { InputTextModule } from 'primeng/inputtext';
-import { ToolbarModule } from 'primeng/toolbar';
-import { RadioButtonModule } from 'primeng/radiobutton';
-import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { ConfirmationService } from 'primeng/api';
 import { InputTextareaModule } from 'primeng/inputtextarea';
-import { HttpErrorResponse } from '@angular/common/http';
+import { RadioButtonModule } from 'primeng/radiobutton';
+import { TableModule } from 'primeng/table';
+import { ToastModule } from 'primeng/toast';
+import { ToolbarModule } from 'primeng/toolbar';
 import { catchError, throwError } from 'rxjs';
 import { TransactionType } from '../interfaces/queueCustomer';
-import { config } from 'node:process';
-import { response } from 'express';
-import { error } from 'node:console';
 
 type AdminStatus = 'active' | 'inactive';
 
 type ThemeType = 1 | 2 | 0;
+
+interface Config {
+  displayId: number;
+  dispMsg: string;
+  scrollTime: string;
+  video: string;
+  themeType: number;
+  isEditing: boolean;
+}
+
+interface DisplayConfig {
+  displayId?: number;
+  dispMsg?: string;
+  scrollTime?: string;
+  video?: string;
+  themeType?: number;
+  isEditing: boolean;
+}
 
 interface Terminal {
   terminalName: string;
@@ -80,13 +95,13 @@ export class QueueTerminalComponent {
   selectedTerminals: Terminal[] = [];
   statuses = ['active', 'inactive'];
   originalData = new Map<number, Terminal>();
+  originalConfig = new Map<number, DisplayConfig>();
 
   terminalDialog: boolean = false;
   submitted: boolean = false;
   terminal: TerminalDialog = {};
 
-  themeUpdateValue: ThemeType = 0;
-  editThemeType: boolean = false;
+  configList: DisplayConfig[] = [];
 
   newStatuses: DropdownOptionsType<AdminStatus> = [
     { label: 'Active', value: 'active' },
@@ -105,6 +120,9 @@ export class QueueTerminalComponent {
     { label: '2', value: 2 },
   ];
 
+  themeUpdateValue: ThemeType = 1;
+  editThemeType: boolean = false;
+
   constructor(
     private adminService: AdminService,
     private messageService: MessageService,
@@ -115,6 +133,7 @@ export class QueueTerminalComponent {
 
   ngOnInit(): void {
     this.getTerminal();
+    this.getConfig();
 
     this.displayService.checkThemeActive().subscribe({
       next: (response) => {
@@ -165,6 +184,17 @@ export class QueueTerminalComponent {
     });
   }
 
+  getConfig() {
+    this.displayService.getConfig().subscribe((response: any) => {
+      this.configList = response.map((item: any) => {
+        return {
+          ...item,
+          isEditable: false,
+        };
+      });
+    });
+  }
+
   onRowEditInit(terminal: Terminal) {
     this.originalData.set(terminal.terminalId, { ...terminal });
     terminal.isEditing = true;
@@ -196,6 +226,32 @@ export class QueueTerminalComponent {
     }
     // Clean up the original data storage
     this.originalData.delete(terminal.terminalId);
+  }
+
+  onConfigRowEditInit(config: Config) {
+    this.originalConfig.set(config.displayId, { ...config });
+    config.isEditing = true;
+  }
+
+  onConfigRowEditSave(config: Config) {
+    config.isEditing = false;
+    const { displayId, dispMsg, scrollTime, video, themeType } = config;
+    this.displayService
+      .updateConfig(displayId, dispMsg, video, themeType, scrollTime)
+      .subscribe(() => {
+        this.getConfig();
+      });
+  }
+
+  onConfigRowEditCancel(config: Config) {
+    const originalConfigData = this.originalConfig.get(config.displayId);
+    if (originalConfigData) {
+      // Restore the original data
+      Object.assign(config, originalConfigData);
+      config.isEditing = false;
+    }
+    // Clean up the original data storage
+    this.originalData.delete(config.displayId);
   }
 
   openNew() {
@@ -299,6 +355,20 @@ export class QueueTerminalComponent {
         });
       },
     });
+  }
+
+  updateThemeMessage() {
+    console.log('hiiii');
+    this.displayService
+      .updateThemeMessage(1, 'Sticking out your gyatt for nerizzler')
+      .subscribe({
+        next: (response) => {
+          console.log(response);
+        },
+        error: (error: unknown) => {
+          console.log(error);
+        },
+      });
   }
 
   showSuccess() {
