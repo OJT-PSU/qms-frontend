@@ -71,7 +71,12 @@ export class Theme0Component implements OnInit {
 
     this.websocketService.themeUpdateEvent().subscribe((config: any) => {
       const { themeType } = config;
-      this.router.navigate([`/theme/`, `${themeType}`]);
+      const urlParts = this.router.url.split('/');
+      if (urlParts[urlParts.length - 1] !== themeType.toString()) {
+        this.router.navigate([`/theme/`, `${themeType}`]);
+      } else {
+        this.getConfig();
+      }
     });
 
     this.websocketService.queueUpdateEvent().subscribe((response) => {
