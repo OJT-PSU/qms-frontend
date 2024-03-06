@@ -40,7 +40,7 @@ export class Theme2Component implements OnInit {
     src: ['../../assets/sound.mp3'],
     html5: true,
   });
-  last_id: any = null;
+  last_id: Map<number, any> = new Map();
 
   constructor(
     private queueService: QueueService,
@@ -69,14 +69,16 @@ export class Theme2Component implements OnInit {
       elementToAlert?.classList.add('alert');
       elementToAlert?.classList.remove('notAlert');
 
-      if (this.last_id !== null) {
-        clearTimeout(this.last_id);
+      if (this.last_id.get(response.queueId) !== null) {
+        clearTimeout(this.last_id.get(response.queueId));
       }
 
-      this.last_id = setTimeout(() => {
+      const id = setTimeout(() => {
         elementToAlert?.classList.add('notAlert');
         elementToAlert?.classList.remove('alert');
       }, 5000);
+
+      this.last_id.set(response.queueId, id);
     });
 
     this.websocketService.getQueue().subscribe((response) => {
