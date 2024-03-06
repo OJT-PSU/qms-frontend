@@ -42,17 +42,21 @@
         <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
         <!-- Add this line -->
       </th>
-      <th style="width: 20%">Terminal Name</th>
-      <th style="width: 20%">Remarks</th>
-      <th style="width: 20%">Status</th>
-      <th style="width: 20%">Transaction Type</th>
-      <th style="width: 20%"></th>
+      <th style="width: 10%">ID</th>
+      <th style="width: 18%">Terminal Name</th>
+      <th style="width: 18%">Remarks</th>
+      <th style="width: 18%">Status</th>
+      <th style="width: 18%">Transaction Type</th>
+      <th style="width: 18%"></th>
     </tr>
   </ng-template>
   <ng-template pTemplate="body" let-terminal let-editing="editing">
     <tr [pEditableRow]="terminal">
       <td>
         <p-tableCheckbox [value]="terminal"></p-tableCheckbox>
+      </td>
+      <td>
+        {{ terminal.terminalId }}
       </td>
       <td>
         <p-cellEditor>
