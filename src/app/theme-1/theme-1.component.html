@@ -51,7 +51,7 @@
             [class.notAlert]="
               alertName !== item.name || alertQueueId !== item.queueId
             "
-            ><span>{{ item.name }}</span> <span>{{ item.terminal }}</span></span
+            >{{ item.name }} {{ item.terminal }}</span
           >} }
         </div>
         <div class="w-4">
@@ -66,23 +66,16 @@
           ></span>
           } @for (item of ongoingInquiry; track item.queueId) { @if
           (item.toDisplay === 0) {
-          <p
-            class="flex flex-row gap-1 align-items-center justify-content-between"
+          <span
+            [id]="item.queueId"
+            class="w-full mb-1 flex flex-row px-2 justify-content-center align-items-center h-5rem text-3xl font-bold text-white"
+            [class.alert]="alertName === item.name"
+            [class.notAlert]="
+              alertName !== item.name || alertQueueId !== item.queueId
+            "
+            >{{ item.name }} {{ item.terminal }}</span
           >
-            <span
-              [id]="item.queueId"
-              class="w-full border-1 flex flex-row px-2 justify-content-center align-items-center h-5rem text-3xl font-bold text-white"
-              [class.alert]="alertName === item.name"
-              [class.notAlert]="
-                alertName !== item.name || alertQueueId !== item.queueId
-              "
-              >{{ item.name }}
-            </span>
-            <span>
-              {{ item.terminal }}
-            </span>
-          </p>
-          } }
+          }}
         </div>
       </div>
       <!-- Waiting -->
