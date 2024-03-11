@@ -10,3 +10,5 @@ export interface QueueCustomer {
   queueStatus: QueueStatus;
   createdAt: Date;
 }
+
+export type PriorityType = 'senior' | 'pwd' | 'pregnant' | 'normal';
