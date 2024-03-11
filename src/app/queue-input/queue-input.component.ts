@@ -24,6 +24,12 @@ import { DropdownModule } from 'primeng/dropdown';
 import { CheckboxModule } from 'primeng/checkbox';
 import { ListboxModule } from 'primeng/listbox';
 
+type ListboxOptionsType<T> = Array<{
+  label: string;
+  value: T;
+  icon?: string;
+}>;
+
 @Component({
   selector: 'app-queue-input',
   standalone: true,
@@ -56,12 +62,18 @@ export class QueueInputComponent {
   });
   submitAttempted: boolean = false;
   currentPage = 1;
-  transactions: Array<{ label: string; value: TransactionType; icon: string }> =
-    [
-      { label: 'Payment', value: 'payment', icon: 'pi-credit-card' },
-      { label: 'Check Releasing', value: 'checkReleasing', icon: 'pi-file' },
-      { label: 'Inquiry', value: 'inquiry', icon: 'pi-search' },
-    ];
+  transactions: ListboxOptionsType<TransactionType> = [
+    { label: 'Payment', value: 'payment', icon: 'pi-credit-card' },
+    { label: 'Check Releasing', value: 'checkReleasing', icon: 'pi-file' },
+    { label: 'Inquiry', value: 'inquiry', icon: 'pi-search' },
+  ];
+
+  priorityTypes: ListboxOptionsType<PriorityType> = [
+    { label: 'Normal', value: 'normal', icon: 'pi-search' },
+    { label: 'Senior Citizen', value: 'senior', icon: 'pi-credit-card' },
+    { label: 'PWD', value: 'pwd', icon: 'pi-file' },
+    { label: 'Pregnant', value: 'pregnant', icon: 'pi-search' },
+  ];
 
   constructor(
     private service: QueueService,
@@ -82,6 +94,7 @@ export class QueueInputComponent {
         this.queueForm.value;
       email = email !== '' ? email : undefined;
       contactNumber = contactNumber !== '' ? contactNumber : undefined;
+      console.log(priorityType);
 
       if (this.queueForm.valid) {
         const observable = await this.service.createQueueCustomer(
@@ -170,6 +183,15 @@ export class QueueInputComponent {
     });
   }
 
+  showTransactionRequiredToast() {
+    this.messageService.add({
+      key: 'errorEvent',
+      severity: 'error',
+      summary: 'Error',
+      detail: 'Please choose a transaction.',
+    });
+  }
+
   goToPageOne() {
     this.currentPage = 1;
   }
@@ -179,6 +201,14 @@ export class QueueInputComponent {
       this.showNameRequiredToast();
     } else {
       this.currentPage = 2;
+    }
+  }
+
+  goToPageThree() {
+    if (this.queueForm.value.transactionType === null) {
+      this.showTransactionRequiredToast();
+    } else {
+      this.currentPage = 3;
     }
   }
 }
