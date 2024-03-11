@@ -71,6 +71,34 @@
           </div>
         </ng-template>
       </p-listbox>
+    </div>
+    <div class="mt-5 flex flex-row justify-content-between">
+      <button
+        pRipple
+        pButton
+        label="Back"
+        class="p-button-outlined"
+        (click)="goToPageOne()"
+      ></button>
+      <button pButton pRipple label="Next" (click)="goToPageThree()"></button>
+    </div>
+    } @if(currentPage === 3) {
+
+    <div class="third-step">
+      <p-listbox
+        [options]="priorityTypes"
+        formControlName="priorityType"
+        optionLabel="label"
+        optionValue="value"
+        [style]="{ width: '22rem' }"
+      >
+        <ng-template let-transaction pTemplate="transaction">
+          <div class="flex align-items-center">
+            <i [class]="'pi ' + transaction.icon"></i>
+            <span class="ml-2">{{ transaction.label }}</span>
+          </div>
+        </ng-template>
+      </p-listbox>
       <div
         class="mt-5 flex flex-row justify-content-center align-items-center gap-1"
       >
@@ -90,7 +118,7 @@
         pButton
         label="Back"
         class="p-button-outlined"
-        (click)="goToPageOne()"
+        (click)="goToPageTwo()"
       ></button>
       <button pButton pRipple label="Submit" (click)="postData()"></button>
     </div>

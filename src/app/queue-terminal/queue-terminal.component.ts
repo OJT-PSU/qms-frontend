@@ -1,27 +1,49 @@
-import { Component, OnInit } from '@angular/core';
-import { AdminService } from '../service/admin.service';
+import { Component } from '@angular/core';
 import { QueueService } from '../queue.service';
-import { MessageService } from 'primeng/api';
-import { FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+import { AdminService } from '../service/admin.service';
+import { DisplayService } from '../service/display.service';
 
-import { TableModule } from 'primeng/table';
-import { ToastModule } from 'primeng/toast';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { MessageService } from 'primeng/api';
+
+import { HttpErrorResponse } from '@angular/common/http';
+import { ConfirmationService } from 'primeng/api';
+import { ButtonModule } from 'primeng/button';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ContextMenuModule } from 'primeng/contextmenu';
 import { DialogModule } from 'primeng/dialog';
-import { ButtonModule } from 'primeng/button';
 import { DropdownModule } from 'primeng/dropdown';
 import { InputTextModule } from 'primeng/inputtext';
-import { ToolbarModule } from 'primeng/toolbar';
-import { RadioButtonModule } from 'primeng/radiobutton';
-import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { ConfirmationService } from 'primeng/api';
 import { InputTextareaModule } from 'primeng/inputtextarea';
-import { HttpErrorResponse } from '@angular/common/http';
+import { RadioButtonModule } from 'primeng/radiobutton';
+import { TableModule } from 'primeng/table';
+import { ToastModule } from 'primeng/toast';
+import { ToolbarModule } from 'primeng/toolbar';
 import { catchError, throwError } from 'rxjs';
 import { TransactionType } from '../interfaces/queueCustomer';
 
 type AdminStatus = 'active' | 'inactive';
+
+type ThemeType = 1 | 2 | 0;
+
+interface Config {
+  displayId: number;
+  dispMsg: string;
+  scrollTime: string;
+  video: string;
+  themeType: number;
+  isEditing: boolean;
+}
+
+interface DisplayConfig {
+  displayId?: number;
+  dispMsg?: string;
+  scrollTime?: string;
+  video?: string;
+  themeType?: number;
+  isEditing: boolean;
+}
 
 interface Terminal {
   terminalName: string;
@@ -40,6 +62,11 @@ interface TerminalDialog {
   transactionType?: TransactionType;
   isEditing?: boolean;
 }
+
+type DropdownOptionsType<T> = Array<{
+  label: string;
+  value: T;
+}>;
 
 @Component({
   selector: 'app-queue-terminal',
@@ -68,31 +95,74 @@ export class QueueTerminalComponent {
   selectedTerminals: Terminal[] = [];
   statuses = ['active', 'inactive'];
   originalData = new Map<number, Terminal>();
+  originalConfig = new Map<number, DisplayConfig>();
 
   terminalDialog: boolean = false;
   submitted: boolean = false;
   terminal: TerminalDialog = {};
 
-  newStatuses: any[] = [
+  configList: DisplayConfig[] = [];
+
+  newStatuses: DropdownOptionsType<AdminStatus> = [
     { label: 'Active', value: 'active' },
     { label: 'Inactive', value: 'inactive' },
   ];
 
-  transactions: Array<{ label: string; value: TransactionType }> = [
+  transactions: DropdownOptionsType<TransactionType> = [
     { label: 'Payment', value: 'payment' },
     { label: 'Check Releasing', value: 'checkReleasing' },
     { label: 'Inquiry', value: 'inquiry' },
   ];
 
+  themeOptions: DropdownOptionsType<ThemeType> = [
+    { label: '0', value: 0 },
+    { label: '1', value: 1 },
+    { label: '2', value: 2 },
+  ];
+
+  themeUpdateValue: ThemeType = 1;
+  editThemeType: boolean = false;
+
   constructor(
     private adminService: AdminService,
     private messageService: MessageService,
     private queueService: QueueService,
+    private displayService: DisplayService,
     private confirmationService: ConfirmationService
   ) {}
 
   ngOnInit(): void {
     this.getTerminal();
+    this.getConfig();
+
+    this.displayService.checkThemeActive().subscribe({
+      next: (response) => {
+        const { themeType } = response;
+        this.themeUpdateValue = themeType;
+      },
+      error: (err) => {
+        console.log(err);
+        this.showError(err);
+      },
+    });
+  }
+
+  updateThemeType(value: ThemeType) {
+    this.displayService.updateThemeType(value).subscribe({
+      error: (error) => {
+        this.showError(error);
+      },
+    });
+
+    this.disableEditTheme();
+  }
+
+  editTheme() {
+    this.editThemeType = true;
+  }
+
+  disableEditTheme() {
+    this.editThemeType = false;
   }
 
   getValueByLabel(value: TransactionType) {
@@ -101,33 +171,39 @@ export class QueueTerminalComponent {
   }
 
   getStatusByValue(value: AdminStatus) {
-    const status = this.newStatuses.find((s) => s.value === value);
+    const status = this.newStatuses.find((s) => s.value === value)!;
     return status.label;
   }
 
   getTerminal(): void {
     this.adminService.getAllTerminals().subscribe((response) => {
-      console.log(response);
       this.terminalList = response.map((terminal) => ({
         ...terminal,
         isEditing: false,
       }));
     });
+  }
 
-    console.log(this.terminalList);
+  getConfig() {
+    this.displayService.getConfig().subscribe((response: any) => {
+      this.configList = response.map((item: any) => {
+        return {
+          ...item,
+          isEditable: false,
+        };
+      });
+    });
   }
 
   onRowEditInit(terminal: Terminal) {
     this.originalData.set(terminal.terminalId, { ...terminal });
     terminal.isEditing = true;
-    console.log(this.terminalList);
   }
 
   onRowEditSave(terminal: Terminal) {
     terminal.isEditing = false;
     const { terminalName, status, remarks, terminalId, transactionType } =
       terminal;
-    console.log(terminal);
     this.adminService
       .updateTerminal(
         terminalId,
@@ -137,7 +213,6 @@ export class QueueTerminalComponent {
         transactionType
       )
       .subscribe((response) => {
-        console.log(response);
         this.getTerminal();
       });
   }
@@ -153,6 +228,32 @@ export class QueueTerminalComponent {
     this.originalData.delete(terminal.terminalId);
   }
 
+  onConfigRowEditInit(config: Config) {
+    this.originalConfig.set(config.displayId, { ...config });
+    config.isEditing = true;
+  }
+
+  onConfigRowEditSave(config: Config) {
+    config.isEditing = false;
+    const { displayId, dispMsg, scrollTime, video, themeType } = config;
+    this.displayService
+      .updateConfig(displayId, dispMsg, video, themeType, scrollTime)
+      .subscribe(() => {
+        this.getConfig();
+      });
+  }
+
+  onConfigRowEditCancel(config: Config) {
+    const originalConfigData = this.originalConfig.get(config.displayId);
+    if (originalConfigData) {
+      // Restore the original data
+      Object.assign(config, originalConfigData);
+      config.isEditing = false;
+    }
+    // Clean up the original data storage
+    this.originalData.delete(config.displayId);
+  }
+
   openNew() {
     this.terminal = {};
     this.submitted = false;
@@ -166,7 +267,6 @@ export class QueueTerminalComponent {
 
   saveProduct() {
     this.submitted = true;
-    console.log(this.terminal);
     const { terminalName, status, remarks, transactionType } = this.terminal;
 
     this.adminService
@@ -179,7 +279,6 @@ export class QueueTerminalComponent {
       )
       .subscribe({
         next: (config) => {
-          console.log({ config });
           this.getTerminal();
 
           this.showSuccess();
@@ -227,7 +326,6 @@ export class QueueTerminalComponent {
       accept: () => {
         const ids = this.selectedTerminals.map((t) => t.terminalId);
         this.adminService.deleteTerminals(ids).subscribe((response) => {
-          console.log({ response });
           this.getTerminal();
         });
         this.messageService.add({
@@ -257,6 +355,20 @@ export class QueueTerminalComponent {
         });
       },
     });
+  }
+
+  updateThemeMessage() {
+    console.log('hiiii');
+    this.displayService
+      .updateThemeMessage(1, 'Sticking out your gyatt for nerizzler')
+      .subscribe({
+        next: (response) => {
+          console.log(response);
+        },
+        error: (error: unknown) => {
+          console.log(error);
+        },
+      });
   }
 
   showSuccess() {

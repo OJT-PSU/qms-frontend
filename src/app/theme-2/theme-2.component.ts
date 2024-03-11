@@ -1,9 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { QueueService } from '../queue.service';
+import { DisplayService } from '../service/display.service';
 import { WebSocketService } from '../socket/web-socket.service';
 import moment from 'moment';
 import _ from 'lodash';
 import { Howl, Howler } from 'howler';
+import { Router } from '@angular/router';
+
 @Component({
   selector: 'app-theme-2',
   standalone: true,
@@ -37,29 +40,45 @@ export class Theme2Component implements OnInit {
     src: ['../../assets/sound.mp3'],
     html5: true,
   });
+  last_id: Map<number, any> = new Map();
+
   constructor(
     private queueService: QueueService,
-    private websocketService: WebSocketService
+    private websocketService: WebSocketService,
+    private displayService: DisplayService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
     this.getData();
     this.getConfig();
-    const videoElement = document.querySelector('video');
-    if (videoElement) {
-      videoElement.volume = 0;
-    }
 
-    this.websocketService.queuePingEvent().subscribe((response) => {
-      this.alertName = '';
-      this.alertQueueId = '';
-      this.alertQueue = response;
-      this.alertName = this.alertQueue.name;
-      this.alertQueueId = this.alertQueue.queueId;
-      const alertNow = this.alertName + '' + this.alertQueueId;
-      const putAlert = document.querySelector(`.${alertNow}`);
-      putAlert?.classList.add('alert');
+    this.websocketService.themeUpdateEvent().subscribe((config: any) => {
+      const { themeType } = config;
+      const urlParts = this.router.url.split('/');
+      if (urlParts[urlParts.length - 1] !== themeType.toString()) {
+        this.router.navigate([`/theme/`, `${themeType}`]);
+      } else {
+        this.getConfig();
+      }
+    });
+
+    this.websocketService.queuePingEvent().subscribe((response: any) => {
       this.sound.play();
+      const elementToAlert = document.getElementById(response.queueId);
+      elementToAlert?.classList.add('alert');
+      elementToAlert?.classList.remove('notAlert');
+
+      if (this.last_id.get(response.queueId) !== null) {
+        clearTimeout(this.last_id.get(response.queueId));
+      }
+
+      const id = setTimeout(() => {
+        elementToAlert?.classList.add('notAlert');
+        elementToAlert?.classList.remove('alert');
+      }, 5000);
+
+      this.last_id.set(response.queueId, id);
     });
 
     this.websocketService.getQueue().subscribe((response) => {
@@ -81,9 +100,23 @@ export class Theme2Component implements OnInit {
       this.refresh();
     });
 
-    this.websocketService.queueUpdateEvent().subscribe(() => {
-      this.websocketService.sendQueueRequest();
+    this.websocketService.queueUpdateEvent().subscribe((response) => {
+      this.data = response.sort((a, b) => {
+        if (
+          a.queueStatus == 'waiting' ||
+          (a.queueStatus == 'ongoing' && a.toDisplay === 0)
+        ) {
+          this.hasWaiting = true;
+        }
+        if (a.queueStatus !== b.queueStatus) {
+          return a.queueStatus.localeCompare(b.queueStatus);
+        } else {
+          return a.queueId - b.queueId;
+        }
+      });
+      this.refresh();
     });
+
     setInterval(() => {
       this.amPm = moment().format('A');
       this.getHour = moment().format('h');
@@ -95,49 +128,33 @@ export class Theme2Component implements OnInit {
   }
 
   refresh(): void {
-    this.alertName = '';
-    this.alertQueueId = '';
-    let hasAlreadyPlayed = false;
-    this.hasWaiting = false;
-
-    setInterval(() => {
-      const parentDiv = document.querySelector('.parentAlert');
-      if (parentDiv) {
-        const elementsToRemove = parentDiv.querySelectorAll('.alert');
-        elementsToRemove.forEach((element) =>
-          element.classList.remove('alert')
-        );
-      }
-      this.alertName = '';
-    }, 5000);
-    this.data.forEach((item) => {
-      if (item.queueStatus == 'ongoing' && !hasAlreadyPlayed) {
-        this.sound.play();
-        hasAlreadyPlayed = true;
-      }
-    });
-
     const currentDate = moment();
     this.data = _.filter(this.data, (o) => {
       const dateItem = moment(o.createdAt);
       return (
         currentDate.isSame(dateItem, 'day') &&
         currentDate.isSame(dateItem, 'month') &&
-        currentDate.isSame(dateItem, 'year')
+        currentDate.isSame(dateItem, 'year') &&
+        o.toDisplay == 0
       );
     });
     this.payment = _.filter(this.data, (o) => {
       return o.queueStatus != 'accommodated' && o.transactionType == 'payment';
     });
+    this.payment = _.slice(this.payment, 0, 7);
     this.checkReleasing = _.filter(this.data, (o) => {
       return (
         o.queueStatus != 'accommodated' && o.transactionType == 'checkReleasing'
       );
     });
+    this.checkReleasing = _.slice(this.checkReleasing, 0, 7);
+
     this.inquiry = _.filter(this.data, (o) => {
       return o.queueStatus != 'accommodated' && o.transactionType == 'inquiry';
     });
+    this.inquiry = _.slice(this.inquiry, 0, 7);
   }
+
   getData(): void {
     this.queueService.getQueueCustomer().subscribe(
       (response) => {
@@ -163,7 +180,7 @@ export class Theme2Component implements OnInit {
   }
 
   getConfig(): void {
-    this.queueService.getConfig().subscribe(
+    this.displayService.getConfig().subscribe(
       (response) => {
         const { dispMsg, scrollTime, video } = response[0];
         this.videoUrl = '../../assets/' + video;

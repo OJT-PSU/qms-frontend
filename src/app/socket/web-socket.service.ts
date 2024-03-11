@@ -10,7 +10,6 @@ export class WebSocketService {
 
   sendQueueRequest() {
     this.socket.emit('queue-request');
-    console.log('hiiiiiiiiiiii');
   }
 
   getQueue() {
@@ -27,8 +26,20 @@ export class WebSocketService {
 
   queueUpdateEvent() {
     let observable = new Observable<any[]>((observer) => {
-      this.socket.on('new-queue-update', () => {
-        observer.next();
+      this.socket.on('new-queue-update', (response: any) => {
+        observer.next(response);
+      });
+      return () => {
+        this.socket.disconnect();
+      };
+    });
+    return observable;
+  }
+
+  themeUpdateEvent() {
+    let observable = new Observable<any[]>((observer) => {
+      this.socket.on('new-theme-update', (response: any) => {
+        observer.next(response);
       });
       return () => {
         this.socket.disconnect();

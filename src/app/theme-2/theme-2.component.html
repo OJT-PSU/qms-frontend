@@ -38,11 +38,12 @@
           @for (payment of payment; track payment.queueId){
           <div
             [class]="payment.queueStatus + ' ' + payment.name + payment.queueId"
-            class="border-1 flex flex-row px-5 justify-content-between align-items-center h-5rem text-4xl font-bold"
+            [id]="payment.queueId"
+            class="border-1 flex flex-row px-2 justify-content-between align-items-center h-5rem text-4xl font-bold"
           >
             <p>{{ payment.name.toUpperCase() }}</p>
             @if(payment.terminal != null){
-            <p>{{ "W" + payment.terminal }}</p>
+            <p>{{ payment.terminal }}</p>
             }
           </div>
           }
@@ -57,11 +58,12 @@
               checkReleasing.name +
               checkReleasing.queueId
             "
-            class="border-1 flex flex-row px-5 justify-content-between align-items-center h-5rem text-4xl font-bold"
+            [id]="checkReleasing.queueId"
+            class="border-1 flex flex-row px-2 justify-content-between align-items-center h-5rem text-4xl font-bold"
           >
             <p>{{ checkReleasing.name.toUpperCase() }}</p>
             @if(checkReleasing.terminal != null){
-            <p>{{ "W" + checkReleasing.terminal }}</p>
+            <p>{{ checkReleasing.terminal }}</p>
             }
           </div>
           }
@@ -71,11 +73,12 @@
           @for (inquiry of inquiry; track inquiry.queueId){
           <div
             [class]="inquiry.queueStatus + ' ' + inquiry.name + inquiry.queueId"
-            class="border-1 flex flex-row px-5 justify-content-between align-items-center h-5rem text-4xl font-bold"
+            [id]="inquiry.queueId"
+            class="border-1 flex flex-row px-2 justify-content-between align-items-center h-5rem text-4xl font-bold"
           >
             <p>{{ inquiry.name.toUpperCase() }}</p>
             @if(inquiry.terminal != null){
-            <p>{{ "W" + inquiry.terminal }}</p>
+            <p>{{ inquiry.terminal }}</p>
             }
           </div>
           }
@@ -98,9 +101,10 @@
         <video
           class="w-full"
           src="../../assets/sample_video.mp4"
-          autoplay
-          muted
-          loop
+          #video
+          (canplay)="video.play()"
+          (loadedmetadata)="video.muted = true"
+          (ended)="video.play()"
         ></video>
         <div
           class="flex flex-row justify-content-center gap-4 align-items-center bg-gray-900 text-white w-full px-5 text-4xl font-bold"

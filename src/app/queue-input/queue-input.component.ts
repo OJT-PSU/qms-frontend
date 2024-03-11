@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component } from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -10,7 +10,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { NgClass } from '@angular/common';
 
-import { TransactionType } from '../interfaces/queueCustomer';
+import { TransactionType, PriorityType } from '../interfaces/queueCustomer';
 import { QueueService } from '../queue.service';
 import { catchError, throwError } from 'rxjs';
 
@@ -23,6 +23,12 @@ import { CardModule } from 'primeng/card';
 import { DropdownModule } from 'primeng/dropdown';
 import { CheckboxModule } from 'primeng/checkbox';
 import { ListboxModule } from 'primeng/listbox';
+
+type ListboxOptionsType<T> = Array<{
+  label: string;
+  value: T;
+  icon?: string;
+}>;
 
 @Component({
   selector: 'app-queue-input',
@@ -52,15 +58,22 @@ export class QueueInputComponent {
     contactNumber: new FormControl(''),
     transactionType: new FormControl<TransactionType | null>(null),
     privacyAgreement: new FormControl<boolean>(false),
+    priorityType: new FormControl<PriorityType>('normal'),
   });
   submitAttempted: boolean = false;
   currentPage = 1;
-  transactions: Array<{ label: string; value: TransactionType; icon: string }> =
-    [
-      { label: 'Payment', value: 'payment', icon: 'pi-credit-card' },
-      { label: 'Check Releasing', value: 'checkReleasing', icon: 'pi-file' },
-      { label: 'Inquiry', value: 'inquiry', icon: 'pi-search' },
-    ];
+  transactions: ListboxOptionsType<TransactionType> = [
+    { label: 'Payment', value: 'payment', icon: 'pi-credit-card' },
+    { label: 'Check Releasing', value: 'checkReleasing', icon: 'pi-file' },
+    { label: 'Inquiry', value: 'inquiry', icon: 'pi-search' },
+  ];
+
+  priorityTypes: ListboxOptionsType<PriorityType> = [
+    { label: 'Normal', value: 'normal', icon: 'pi-search' },
+    { label: 'Senior Citizen', value: 'senior', icon: 'pi-credit-card' },
+    { label: 'PWD', value: 'pwd', icon: 'pi-file' },
+    { label: 'Pregnant', value: 'pregnant', icon: 'pi-search' },
+  ];
 
   constructor(
     private service: QueueService,
@@ -77,18 +90,19 @@ export class QueueInputComponent {
     if (!this.queueForm.value.privacyAgreement) {
       this.showPrivacyAgreementToast();
     } else {
-      let { name, email, contactNumber, transactionType } =
+      let { name, email, contactNumber, transactionType, priorityType } =
         this.queueForm.value;
       email = email !== '' ? email : undefined;
       contactNumber = contactNumber !== '' ? contactNumber : undefined;
-      console.log(name, email, contactNumber, transactionType);
+      console.log(priorityType);
 
       if (this.queueForm.valid) {
         const observable = await this.service.createQueueCustomer(
           name ?? '',
           email,
           contactNumber,
-          transactionType
+          transactionType,
+          priorityType
         );
 
         observable
@@ -100,7 +114,6 @@ export class QueueInputComponent {
           )
           .subscribe({
             next: (config) => {
-              console.log({ config });
               this.showSuccess();
               this.queueForm.setValue({
                 name: '',
@@ -108,6 +121,7 @@ export class QueueInputComponent {
                 contactNumber: '',
                 transactionType: 'checkReleasing',
                 privacyAgreement: false,
+                priorityType: 'normal',
               });
               this.submitAttempted = false;
               this.currentPage = 1;
@@ -169,6 +183,15 @@ export class QueueInputComponent {
     });
   }
 
+  showTransactionRequiredToast() {
+    this.messageService.add({
+      key: 'errorEvent',
+      severity: 'error',
+      summary: 'Error',
+      detail: 'Please choose a transaction.',
+    });
+  }
+
   goToPageOne() {
     this.currentPage = 1;
   }
@@ -178,6 +201,14 @@ export class QueueInputComponent {
       this.showNameRequiredToast();
     } else {
       this.currentPage = 2;
+    }
+  }
+
+  goToPageThree() {
+    if (this.queueForm.value.transactionType === null) {
+      this.showTransactionRequiredToast();
+    } else {
+      this.currentPage = 3;
     }
   }
 }

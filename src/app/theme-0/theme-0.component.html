@@ -9,19 +9,20 @@
             class="text-white bg-gray-900 py-2 px-2 flex flex-row justify-content-between align-items-center"
           >
             <p
-              class="text-2xl m-0 flex flex-row justify-content-center align-items-center w-2"
+              class="text-2xl m-0 flex flex-row justify-content-center align-items-center w-8"
             >
-              Window
+              Name
             </p>
             <p
               class="text-2xl m-0 flex flex-row justify-content-center align-items-center w-2"
             >
               Transaction
             </p>
+
             <p
-              class="text-2xl m-0 flex flex-row justify-content-center align-items-center w-8"
+              class="text-2xl m-0 flex flex-row justify-content-center align-items-center w-2"
             >
-              Name
+              Window
             </p>
           </div>
           <div class="parentAlert">
@@ -30,9 +31,12 @@
             <div
               class="border-1 flex flex-row justify-content-between align-items-center px-2 h-5rem text-6xl font-bold"
               [class]="mydata.queueStatus + ' ' + mydata.name + mydata.queueId"
+              [id]="mydata.queueId"
             >
-              <div class="w-2 flex flex-row text-left justify-content-center">
-                {{ mydata.terminal }}
+              <div
+                class="w-8 flex flex-row justify-content-center align-items-center"
+              >
+                {{ mydata.name.toUpperCase() }}
               </div>
               <div
                 class="w-2 flex flex-row justify-content-center align-items-center"
@@ -45,10 +49,9 @@
                 {{ "CHK" }}
                 }
               </div>
-              <div
-                class="w-8 flex flex-row justify-content-center align-items-center"
-              >
-                {{ mydata.name.toUpperCase() }}
+
+              <div class="w-2 flex flex-row text-left justify-content-center">
+                {{ mydata.terminal }}
               </div>
             </div>
             } }
@@ -69,19 +72,46 @@
         <img class="h-5rem w-5rem" src="../../assets/capitol.png" alt="" />
       </div>
       <div class="flex w-full px-5 flex-column align-items-center">
-        <video
-          class="w-full"
-          src="../../assets/sample_video.mp4"
-          autoplay
-          muted
-          loop
-        ></video>
-        <div
-          class="flex flex-row justify-content-center gap-4 align-items-center bg-gray-900 text-white w-full px-5 text-4xl font-bold"
-        >
-          <p>{{ month }}</p>
-          <p>{{ day }},</p>
-          <p>{{ year }}</p>
+        <div>
+          <video
+            class="w-full"
+            src="../../assets/sample_video.mp4"
+            #video
+            (canplay)="video.play()"
+            (loadedmetadata)="video.muted = true"
+            (ended)="video.play()"
+          ></video>
+          <div
+            class="flex flex-row justify-content-center gap-4 align-items-center bg-gray-900 text-white w-full px-5 text-4xl font-bold"
+          >
+            <p>{{ month }}</p>
+            <p>{{ day }},</p>
+            <p>{{ year }}</p>
+          </div>
+        </div>
+        <div class="w-full py-2 flex flex-col justify-content-evenly">
+          <div class="w-full text-3xl">
+            @for (item of extraLeft; track item.queueId){
+            <div
+              class="flex flex-row justify-content-between px-2"
+              [class]="item.queueStatus"
+            >
+              <p class="m-0">{{ item.name }}</p>
+              <p class="m-0">{{ item.terminal }}</p>
+            </div>
+            }
+          </div>
+          <div class="w-full text-3xl">
+            @for (item of extraRight; track item.queueId){
+            <div
+              class="flex flex-row justify-content-between px-2"
+              [class]="item.queueStatus"
+            >
+              <p class="m-0">{{ item.name }}</p>
+              <p class="m-0">{{ item.terminal }}</p>
+            </div>
+            }
+          </div>
         </div>
       </div>
     </div>

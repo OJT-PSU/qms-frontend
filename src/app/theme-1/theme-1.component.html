@@ -8,64 +8,74 @@
         <p>Now Serving</p>
       </div>
       <!-- Column Header -->
-      <div class="flex flex-row gap-5">
-        <div
-          class="w-4 border-1 flex flex-row px-5 justify-content-center align-items-center h-2rem bg-gray-900 text-white"
-        >
-          <p>PAYMENT</p>
+      <div class="flex flex-row gap-2">
+        <div class="w-4">
+          <div
+            class="w-full border-1 px-2 flex flex-row justify-content-center align-items-center h-2rem bg-gray-900 text-white"
+          >
+            PAYMENT
+          </div>
+          @if(ongoingPayment.length === 0){
+          <span
+            class="w-full border-1 flex flex-row px-2 justify-content-center align-items-center h-5rem text-6xl font-bold text-white"
+          ></span>
+          } @for (item of ongoingPayment; track item.queueId) {
+          @if(item.toDisplay === 0) {
+          <span
+            [id]="item.queueId"
+            class="w-full border-1 flex flex-row px-2 justify-content-center align-items-center h-5rem text-3xl font-bold text-white"
+            [class.alert]="alertName === item.name"
+            [class.notAlert]="
+              alertName !== item.name || alertQueueId !== item.queueId
+            "
+            >{{ item.name }} {{ item.terminal }}</span
+          >} }
         </div>
-        <div
-          class="w-4 border-1 flex flex-row px-5 justify-content-center align-items-center h-2rem bg-gray-900 text-white"
-        >
-          <p>CHECK RELEASING</p>
-        </div>
-        <div
-          class="w-4 border-1 flex flex-row px-5 justify-content-center align-items-center h-2rem bg-gray-900 text-white"
-        >
-          <p>INQUIRY</p>
-        </div>
-      </div>
-      <!-- Current Serving -->
-      <div class="flex flex-row gap-5 parentAlert">
-        <div
-          class="w-4 border-1 flex flex-row px-5 justify-content-between align-items-center h-5rem text-6xl font-bold text-white"
-          [class.alert]="alertName === selectedPayment[0]?.name"
-          [class.notAlert]="
-            alertName !== selectedPayment[0]?.name ||
-            alertQueueId !== selectedPayment[0]?.queueId
-          "
-        >
-          @if(selectedPayment[0]?.status =="ongoing"){
-          <p>{{ selectedPayment[0]?.name }}</p>
-          }
-        </div>
+        <div class="w-4">
+          <div
+            class="w-full border-1 flex flex-row px-2 justify-content-center align-items-center h-2rem bg-gray-900 text-white"
+          >
+            CHECK RELEASING
+          </div>
 
-        <!-- Check Releasing -->
-        <div
-          [class.notAlert]="
-            alertName !== selectedCheckReleasing[0]?.name ||
-            alertQueueId !== selectedCheckReleasing[0]?.queueId
-          "
-          [class.alert]="selectedCheckReleasing[0]?.name === alertName"
-          class="w-4 border-1 flex flex-row px-5 justify-content-between align-items-center h-5rem text-6xl font-bold text-white"
-        >
-          @if(selectedCheckReleasing[0]?.status =="ongoing"){
-          <p>{{ selectedCheckReleasing[0]?.name }}</p>
-          }
+          @if(ongoingCheckReleasing.length === 0){
+          <span
+            class="w-full border-1 flex flex-row px-2 justify-content-center align-items-center h-5rem text-6xl font-bold text-white"
+          ></span>
+          } @for (item of ongoingCheckReleasing; track item.queueId) { @if
+          (item.toDisplay === 0) {
+          <span
+            [id]="item.queueId"
+            class="w-full mb-1 flex flex-row px-2 justify-content-center align-items-center h-5rem text-3xl font-bold text-white"
+            [class.alert]="alertName === item.name"
+            [class.notAlert]="
+              alertName !== item.name || alertQueueId !== item.queueId
+            "
+            >{{ item.name }} {{ item.terminal }}</span
+          >} }
         </div>
-
-        <!-- Inquiry -->
-        <div
-          class="w-4 border-1 flex flex-row px-5 justify-content-between align-items-center h-5rem text-6xl font-bold text-white"
-          [class.alert]="alertName === selectedInquiry[0]?.name"
-          [class.notAlert]="
-            alertName !== selectedInquiry[0]?.name ||
-            alertQueueId !== selectedInquiry[0]?.queueId
-          "
-        >
-          @if(selectedInquiry[0]?.status =="ongoing"){
-          <p>{{ selectedInquiry[0]?.name }}</p>
-          }
+        <div class="w-4">
+          <div
+            class="w-full border-1 flex flex-row px-2 justify-content-center align-items-center h-2rem bg-gray-900 text-white"
+          >
+            INQUIRY
+          </div>
+          @if(ongoingInquiry.length === 0){
+          <span
+            class="w-full border-1 flex flex-row px-2 justify-content-center align-items-center h-5rem text-6xl font-bold text-white"
+          ></span>
+          } @for (item of ongoingInquiry; track item.queueId) { @if
+          (item.toDisplay === 0) {
+          <span
+            [id]="item.queueId"
+            class="w-full mb-1 flex flex-row px-2 justify-content-center align-items-center h-5rem text-3xl font-bold text-white"
+            [class.alert]="alertName === item.name"
+            [class.notAlert]="
+              alertName !== item.name || alertQueueId !== item.queueId
+            "
+            >{{ item.name }} {{ item.terminal }}</span
+          >
+          }}
         </div>
       </div>
       <!-- Waiting -->
@@ -76,13 +86,13 @@
       </div>
       <!-- All List -->
       <div
-        class="parentAlert flex flex-row w-12 gap-4 justify-content-center align-items-start"
+        class="parentAlert flex flex-row w-full justify-content-between gap-3 align-items-start"
       >
         <!-- Payment List -->
         <div class="flex flex-column w-4 gap-2">
-          @for (payment of data; track payment.queueId){
+          @for (payment of waitingPayment; track payment.queueId){
           @if(payment.transactionType=="payment" &&
-          payment.queueStatus=="waiting"){
+          payment.queueStatus=="waiting" && payment.toDisplay === 0){
           <div
             class="border-1 flex flex-row px-5 justify-content-between align-items-center h-5rem text-6xl font-bold"
           >
@@ -93,9 +103,8 @@
         </div>
         <!-- Check Releasing -->
         <div class="flex flex-column w-4 gap-2">
-          @for (checkReleasing of data; track checkReleasing.queueId){
-          @if(checkReleasing.transactionType=="checkReleasing" &&
-          checkReleasing.queueStatus=="waiting"){
+          @for (checkReleasing of waitingCheckReleasing; track
+          checkReleasing.queueId){
 
           <div
             class="border-1 flex flex-row px-5 justify-content-between align-items-center h-5rem text-6xl font-bold"
@@ -103,21 +112,18 @@
             <p>{{ checkReleasing.name }}</p>
             <p>{{ checkReleasing.index }}</p>
           </div>
-          }}
+          }
         </div>
         <!-- Inquiry -->
         <div class="flex flex-column w-4 gap-2">
-          @for (inquiry of data; track inquiry.queueId){
-          @if(inquiry.transactionType=="inquiry" &&
-          inquiry.queueStatus=="waiting"){
-
+          @for (inquiry of waitingInquiry; track inquiry.queueId){
           <div
             class="border-1 flex flex-row px-5 justify-content-between align-items-center h-5rem text-6xl font-bold"
           >
             <p>{{ inquiry.name }}</p>
             <p>{{ inquiry.index }}</p>
           </div>
-          }}
+          }
         </div>
       </div>
     </div>
@@ -137,9 +143,10 @@
         <video
           class="w-full"
           src="../../assets/sample_video.mp4"
-          autoplay
-          muted
-          loop
+          #video
+          (canplay)="video.play()"
+          (loadedmetadata)="video.muted = true"
+          (ended)="video.play()"
         ></video>
         <div
           class="flex flex-row justify-content-center gap-4 align-items-center bg-gray-900 text-white w-full px-5 text-4xl font-bold"

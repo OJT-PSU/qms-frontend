@@ -1,9 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { QueueService } from '../queue.service';
+import { DisplayService } from '../service/display.service';
 import { WebSocketService } from '../socket/web-socket.service';
 import moment from 'moment';
 import _ from 'lodash';
 import { Howl, Howler } from 'howler';
+import { Router } from '@angular/router';
+
 @Component({
   selector: 'app-queue-display',
   standalone: true,
@@ -13,6 +16,8 @@ import { Howl, Howler } from 'howler';
 export class Theme0Component implements OnInit {
   data: any[] = [];
   display: any[] = [];
+  extraLeft: any[] = [];
+  extraRight: any[] = [];
 
   alertNow: boolean = false;
   alertQueue: any = [];
@@ -35,37 +40,48 @@ export class Theme0Component implements OnInit {
     src: ['../../assets/sound.mp3'],
     html5: true,
   });
+  last_id: Map<number, any> = new Map();
+
   constructor(
     private queueService: QueueService,
-    private websocketService: WebSocketService
+    private displayService: DisplayService,
+    private websocketService: WebSocketService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
     this.getData();
     this.getConfig();
-    const videoElement = document.querySelector('video');
-    if (videoElement) {
-      videoElement.volume = 0;
-    }
 
-    this.websocketService.queuePingEvent().subscribe((response) => {
-      this.alertName = '';
-      this.alertQueueId = '';
-      this.alertName = '';
-      this.alertQueue = response;
-      this.alertName = this.alertQueue.name;
-      this.alertQueueId = this.alertQueue.queueId;
-      const alertNow = this.alertName + '' + this.alertQueueId;
-      const putAlert = document.querySelector(`.${alertNow}`);
-      putAlert?.classList.add('alert');
+    this.websocketService.queuePingEvent().subscribe((response: any) => {
       this.sound.play();
+      const elementToAlert = document.getElementById(response.queueId);
+      elementToAlert?.classList.add('alert');
+      elementToAlert?.classList.remove('notAlert');
+
+      if (this.last_id.get(response.queueId) !== null) {
+        clearTimeout(this.last_id.get(response.queueId));
+      }
+
+      const id = setTimeout(() => {
+        elementToAlert?.classList.add('notAlert');
+        elementToAlert?.classList.remove('alert');
+      }, 5000);
+
+      this.last_id.set(response.queueId, id);
     });
 
-    this.websocketService.getQueue().subscribe((response) => {
-      this.hasWaiting = false;
-      console.log(this.alertQueueId);
-      console.log(this.alertName);
+    this.websocketService.themeUpdateEvent().subscribe((config: any) => {
+      const { themeType } = config;
+      const urlParts = this.router.url.split('/');
+      if (urlParts[urlParts.length - 1] !== themeType.toString()) {
+        this.router.navigate([`/theme/`, `${themeType}`]);
+      } else {
+        this.getConfig();
+      }
+    });
 
+    this.websocketService.queueUpdateEvent().subscribe((response) => {
       this.data = response.sort((a, b) => {
         if (
           a.queueStatus == 'waiting' ||
@@ -79,12 +95,27 @@ export class Theme0Component implements OnInit {
           return a.queueId - b.queueId;
         }
       });
-      this.refresh();
+
+      const currentDate = moment();
+
+      this.data = _.filter(this.data, (o) => {
+        const dateItem = moment(o.createdAt);
+        return (
+          currentDate.isSame(dateItem, 'day') &&
+          currentDate.isSame(dateItem, 'month') &&
+          currentDate.isSame(dateItem, 'year')
+        );
+      });
+
+      const filteredQueue = _.filter(this.data, (item) => {
+        return item.queueStatus === 'waiting' || item.queueStatus === 'ongoing';
+      });
+
+      this.display = _.slice(filteredQueue, 0, 7);
+      this.extraLeft = _.slice(filteredQueue, 7, 11);
+      this.extraRight = _.slice(filteredQueue, 11, 15);
     });
 
-    this.websocketService.queueUpdateEvent().subscribe(() => {
-      this.websocketService.sendQueueRequest();
-    });
     setInterval(() => {
       this.amPm = moment().format('A');
       this.getHour = moment().format('h');
@@ -95,46 +126,11 @@ export class Theme0Component implements OnInit {
     this.year = moment().format('YYYY');
   }
 
-  refresh(): void {
-    this.alertName = '';
-    this.alertQueueId = '';
-    let hasAlreadyPlayed = false;
-    this.hasWaiting = false;
-    setInterval(() => {
-      const parentDiv = document.querySelector('.parentAlert');
-      if (parentDiv) {
-        const elementsToRemove = parentDiv.querySelectorAll('.alert');
-        elementsToRemove.forEach((element) =>
-          element.classList.remove('alert')
-        );
-      }
-      this.alertName = '';
-    }, 5000);
-    this.data.forEach((item) => {
-      if (item.queueStatus == 'ongoing' && !hasAlreadyPlayed) {
-        this.sound.play();
-        hasAlreadyPlayed = true;
-      }
-    });
-
-    const currentDate = moment();
-    this.data = _.filter(this.data, (o) => {
-      const dateItem = moment(o.createdAt);
-      return (
-        currentDate.isSame(dateItem, 'day') &&
-        currentDate.isSame(dateItem, 'month') &&
-        currentDate.isSame(dateItem, 'year')
-      );
-    });
-
-    const filter = _.filter(this.data, (item) => {
-      return item.queueStatus === 'waiting' || item.queueStatus === 'ongoing';
-    });
-    this.display = _.slice(filter, 0, 7);
-  }
   getData(): void {
     this.queueService.getQueueCustomer().subscribe(
       (response) => {
+        const currentDate = moment();
+
         this.data = response.sort((a, b) => {
           if (
             a.queueStatus == 'waiting' ||
@@ -148,7 +144,25 @@ export class Theme0Component implements OnInit {
             return a.queueId - b.queueId;
           }
         });
-        this.refresh();
+
+        this.data = _.filter(this.data, (o) => {
+          const dateItem = moment(o.createdAt);
+          return (
+            currentDate.isSame(dateItem, 'day') &&
+            currentDate.isSame(dateItem, 'month') &&
+            currentDate.isSame(dateItem, 'year')
+          );
+        });
+
+        const filteredQueue = _.filter(this.data, (item) => {
+          return (
+            item.queueStatus === 'waiting' || item.queueStatus === 'ongoing'
+          );
+        });
+
+        this.display = _.slice(filteredQueue, 0, 7);
+        this.extraLeft = _.slice(filteredQueue, 7, 11);
+        this.extraRight = _.slice(filteredQueue, 11, 15);
       },
       (error) => {
         console.error('Error fetching data:', error);
@@ -157,15 +171,14 @@ export class Theme0Component implements OnInit {
   }
 
   getConfig(): void {
-    this.queueService.getConfig().subscribe(
-      (response) => {
-        console.log(response);
+    this.displayService.getConfig().subscribe(
+      (response: any) => {
         const { dispMsg, scrollTime, video } = response[0];
         this.videoUrl = '../../assets/' + video;
         this.animation = scrollTime;
         this.text = dispMsg;
       },
-      (error) => {
+      (error: unknown) => {
         console.log(error);
       }
     );
