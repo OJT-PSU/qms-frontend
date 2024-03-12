@@ -30,7 +30,14 @@
             @if(mydata.queueStatus !=="accommodated" && mydata.toDisplay !== 1){
             <div
               class="border-1 flex flex-row justify-content-between align-items-center px-2 h-5rem text-6xl font-bold"
-              [class]="mydata.queueStatus + ' ' + mydata.name + mydata.queueId"
+              [class]="
+                mydata.queueStatus +
+                ' ' +
+                mydata.name +
+                mydata.queueId +
+                ' ' +
+                mydata.priorityType
+              "
               [id]="mydata.queueId"
             >
               <div
@@ -82,11 +89,25 @@
             (ended)="video.play()"
           ></video>
           <div
-            class="flex flex-row justify-content-center gap-4 align-items-center bg-gray-900 text-white w-full px-5 text-4xl font-bold"
+            class="flex flex-row justify-content-center gap-4 align-items-center bg-gray-900 text-white w-full px-5 py-2 text-4xl font-bold"
           >
-            <p>{{ month }}</p>
-            <p>{{ day }},</p>
-            <p>{{ year }}</p>
+            <p class="m-0">{{ month }}</p>
+            <p class="m-0">{{ day }},</p>
+            <p class="m-0">{{ year }}</p>
+          </div>
+          <div class="flex flex-row justify-content-evenly align-items-center">
+            <div
+              class="flex flex-row justify-content-center align-items-center gap-1"
+            >
+              <div class="normal-legend h-2rem w-2rem"></div>
+              <p class="text-xl font-bold">Normal</p>
+            </div>
+            <div
+              class="flex flex-row justify-content-center align-items-center gap-1"
+            >
+              <div class="priority-legend h-2rem w-2rem"></div>
+              <p class="text-xl font-bold">Priority</p>
+            </div>
           </div>
         </div>
         <div class="w-full py-2 flex flex-col justify-content-evenly">
@@ -94,10 +115,19 @@
             @for (item of extraLeft; track item.queueId){
             <div
               class="flex flex-row justify-content-between px-2"
-              [class]="item.queueStatus"
+              [class]="item.queueStatus + ' ' + item.priorityType"
             >
-              <p class="m-0">{{ item.name }}</p>
-              <p class="m-0">{{ item.terminal }}</p>
+              <p class="m-0 w-1">{{ item.name }}</p>
+              <p class="m-0 w-1">
+                @if(item.transactionType=="payment"){
+                {{ "PAY" }}
+                }@else if(item.transactionType=="inquiry"){
+                {{ "INQ" }}
+                }@else{
+                {{ "CHK" }}
+                }
+              </p>
+              <p class="m-0 w-1">{{ item.terminal }}</p>
             </div>
             }
           </div>
@@ -105,10 +135,19 @@
             @for (item of extraRight; track item.queueId){
             <div
               class="flex flex-row justify-content-between px-2"
-              [class]="item.queueStatus"
+              [class]="item.queueStatus + ' ' + item.priorityType"
             >
-              <p class="m-0">{{ item.name }}</p>
-              <p class="m-0">{{ item.terminal }}</p>
+              <p class="m-0 w-1">{{ item.name }}</p>
+              <p class="m-0 w-1">
+                @if(item.transactionType=="payment"){
+                {{ "PAY" }}
+                }@else if(item.transactionType=="inquiry"){
+                {{ "INQ" }}
+                }@else{
+                {{ "CHK" }}
+                }
+              </p>
+              <p class="m-0 w-1">{{ item.terminal }}</p>
             </div>
             }
           </div>
