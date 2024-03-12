@@ -37,10 +37,6 @@
   color: black;
   border: 1px solid black;
 }
-.ongoing {
-  background-color: #3b82f6;
-  color: white;
-}
 
 .alert {
   color: white;
@@ -50,6 +46,24 @@
 .blink {
   animation: blinkTime 0.5s linear infinite;
   color: white;
+}
+.ongoing {
+  background-color: #3b82f6;
+  color: white;
+}
+
+.pwd,
+.senior,
+.pregnant {
+  background-color: #5c51d6;
+  color: white;
+}
+
+.priority-legend {
+  background-color: #5c51d6;
+}
+.normal-legend {
+  background-color: #3b82f6;
 }
 
 @keyframes scroll-left {
