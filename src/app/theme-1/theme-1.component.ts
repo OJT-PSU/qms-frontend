@@ -19,6 +19,9 @@ export class Theme1Component implements OnInit {
   slice: number = 0;
 
   data: any[] = [];
+  extraLeft: any[] = [];
+  extraRight: any[] = [];
+
   ongoingPayment: any[] = [];
   ongoingCheckReleasing: any[] = [];
   ongoingInquiry: any[] = [];
@@ -167,6 +170,18 @@ export class Theme1Component implements OnInit {
           item.toDisplay === 0
       );
 
+      const leftWaitingPayment = _.slice(this.waitingPayment, 5);
+      const leftWaitingInquiry = _.slice(this.waitingInquiry, 5);
+      const leftWaitingCheckReleasing = _.slice(this.waitingCheckReleasing, 5);
+      const concatArr = [
+        ...leftWaitingInquiry,
+        ...leftWaitingCheckReleasing,
+        ...leftWaitingPayment,
+      ];
+      console.log(concatArr);
+      this.extraLeft = _.slice(concatArr, 0, 4);
+      this.extraRight = _.slice(concatArr, 4, 7);
+
       const maxDisplay = _.max([
         this.ongoingPayment.length,
         this.ongoingCheckReleasing.length,
@@ -269,6 +284,22 @@ export class Theme1Component implements OnInit {
             item.queueStatus === 'waiting' &&
             item.toDisplay === 0
         );
+
+        const leftWaitingPayment = _.slice(this.waitingPayment, 5);
+        const leftWaitingInquiry = _.slice(this.waitingInquiry, 5);
+        const leftWaitingCheckReleasing = _.slice(
+          this.waitingCheckReleasing,
+          5
+        );
+        const concatArr = [
+          ...leftWaitingInquiry,
+          ...leftWaitingCheckReleasing,
+          ...leftWaitingPayment,
+        ];
+        console.log(concatArr);
+        this.extraLeft = _.slice(concatArr, 0, 4);
+        this.extraRight = _.slice(concatArr, 4, 7);
+
         const maxDisplay = _.max([
           this.ongoingPayment.length,
           this.ongoingCheckReleasing.length,
